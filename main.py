@@ -5,14 +5,21 @@ import config
 
 GRID = []
 
+STARTING_POINT = None
+END_POINT      = None
+
+clock = pygame.time.Clock()
 
 class Square:
     def __init__(self, x, y):
         self.x, self.y = x, y
         self.color = None
+        self.wall = False
 
     def draw(self, window, color):
         self.color = color
+        if self.wall:
+            self.color = config.BLACK
         pygame.draw.rect(window, color, (self.x*get_width(), self.y*get_heigth(), get_width()-1, get_heigth()-1), 0)
 
 
@@ -44,6 +51,11 @@ def build_initial_board():
             array.append(Square(i, j))
         GRID.append(array)
 
+def draw_wall(mouse_pos, state):
+    x_pos = mouse_pos[0]//get_width()
+    y_pos = mouse_pos[1]//get_width()
+    GRID[x_pos][y_pos].wall = True
+
 
 def main():
     pygame.init()
@@ -59,12 +71,17 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 close_game()
-            # For future implementation of placing stuf on the board
+
             if event.type == pygame.MOUSEBUTTONUP:
                 if pygame.mouse.get_pressed(0):
-                    # Eventually use this to draw the walls.
-                    # TODO: Think about using Shift+Click or just Click for the wall creation
-                    print(f'Right click Mouse position: {pygame.mouse.get_pos()}')
+                    draw_wall(pygame.mouse.get_pos(), True)
+
+                if pygame.mouse.get_pressed(2):
+                    draw_wall(pygame.mouse.get_pos(), False)
+
+            if event.type == pygame.MOUSEMOTION:
+                if pygame.mouse.get_pressed()[0]:
+                    draw_wall(pygame.mouse.get_pos(), True)
 
 
             if event.type == pygame.KEYDOWN:
@@ -95,11 +112,13 @@ def main():
                     square.draw(window, config.LIGHT_BLUE)
                 elif square.color == config.GREEN:
                     square.draw(window, config.GREEN)
+                elif square.color == config.BLACK:
+                    square.draw(window, config.BLACK)
                 else:
                     square.draw(window, config.WHITE)
 
-
         pygame.display.flip()
+        clock.tick(config.FPS)
 
 
 
