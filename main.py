@@ -31,6 +31,7 @@ def get_heigth():
     '''
     return config.HEIGTH//config.NUM_ROWS
 
+
 def close_game():
     ''' Close the game'''
     pygame.quit()
@@ -60,24 +61,27 @@ def main():
                 close_game()
             # For future implementation of placing stuf on the board
             if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1: # Right click
-                    if not(start_point_chosen_flag):
-                        square = GRID[math.floor(pygame.mouse.get_pos()[0]//15)][math.floor(pygame.mouse.get_pos()[1]//15)]
-                        square.draw(window, config.GREEN) # Draw the starting point on the board
-                        start_point_chosen_flag = True
-
+                if pygame.mouse.get_pressed(0):
+                    # Eventually use this to draw the walls.
+                    # TODO: Think about using Shift+Click or just Click for the wall creation
                     print(f'Right click Mouse position: {pygame.mouse.get_pos()}')
 
-                if not(end_point_chosen_flag) and event.button == 3: # Left click
-                    square = GRID[math.floor(pygame.mouse.get_pos()[0]//15)][math.floor(pygame.mouse.get_pos()[1]//15)]
-                    square.draw(window, config.LIGHT_BLUE) # Draw the endpoint on the board
-                    end_point_chosen_flag = True # End point established
-                    #print(f'Mouse 0 --> {math.floor(pygame.mouse.get_pos()[0]//15)}')
 
             if event.type == pygame.KEYDOWN:
                 # Start the visualizer
                 if event.key == pygame.K_RETURN:
                     start_flag = True
+                if event.key == pygame.K_s: # Draw starting node on the board with (s) key
+                    if not start_point_chosen_flag:
+                        square = GRID[math.floor(pygame.mouse.get_pos()[0]//get_width())][math.floor(pygame.mouse.get_pos()[1]//get_width())]
+                        square.draw(window, config.GREEN)
+                        start_point_chosen_flag = True
+                if event.key == pygame.K_e: # Draw end node on the board with (e) key
+                    if not end_point_chosen_flag:
+                        square = GRID[math.floor(pygame.mouse.get_pos()[0]//get_width())][math.floor(pygame.mouse.get_pos()[1]//get_width())]
+                        square.draw(window, config.LIGHT_BLUE)
+                        end_point_chosen_flag = True
+
 
         window.fill((0, 0, 20))
         for i in range(config.NUM_COLS):
