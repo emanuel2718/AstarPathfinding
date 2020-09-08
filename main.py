@@ -73,12 +73,16 @@ def main():
                     start_flag = True
                 if event.key == pygame.K_s: # Draw starting node on the board with (s) key
                     if not start_point_chosen_flag:
-                        square = GRID[math.floor(pygame.mouse.get_pos()[0]//get_width())][math.floor(pygame.mouse.get_pos()[1]//get_width())]
+                        x_pos = math.floor(pygame.mouse.get_pos()[0]//get_width())
+                        y_pos = math.floor(pygame.mouse.get_pos()[1]//get_width())
+                        square = GRID[x_pos][y_pos]
                         square.draw(window, config.GREEN)
                         start_point_chosen_flag = True
                 if event.key == pygame.K_e: # Draw end node on the board with (e) key
                     if not end_point_chosen_flag:
-                        square = GRID[math.floor(pygame.mouse.get_pos()[0]//get_width())][math.floor(pygame.mouse.get_pos()[1]//get_width())]
+                        x_pos = math.floor(pygame.mouse.get_pos()[0]//get_width())
+                        y_pos = math.floor(pygame.mouse.get_pos()[1]//get_width())
+                        square = GRID[x_pos][y_pos]
                         square.draw(window, config.LIGHT_BLUE)
                         end_point_chosen_flag = True
 
