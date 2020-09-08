@@ -50,8 +50,9 @@ def main():
 
     build_initial_board()
 
-    start_flag = False
-    end_point_chosen_flag = False
+    start_flag               = False
+    start_point_chosen_flag  = False
+    end_point_chosen_flag    = False
 
     while True:
         for event in pygame.event.get():
@@ -60,6 +61,11 @@ def main():
             # For future implementation of placing stuf on the board
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1: # Right click
+                    if not(start_point_chosen_flag):
+                        square = GRID[math.floor(pygame.mouse.get_pos()[0]//15)][math.floor(pygame.mouse.get_pos()[1]//15)]
+                        square.draw(window, config.GREEN) # Draw the starting point on the board
+                        start_point_chosen_flag = True
+
                     print(f'Right click Mouse position: {pygame.mouse.get_pos()}')
 
                 if not(end_point_chosen_flag) and event.button == 3: # Left click
@@ -79,6 +85,8 @@ def main():
                 square = GRID[j][i]
                 if square.color == config.LIGHT_BLUE:
                     square.draw(window, config.LIGHT_BLUE)
+                elif square.color == config.GREEN:
+                    square.draw(window, config.GREEN)
                 else:
                     square.draw(window, config.WHITE)
 
