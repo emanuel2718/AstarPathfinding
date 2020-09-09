@@ -3,8 +3,8 @@
 ''' Contains all the technical configurations of the game'''
 
 # Size of the pygame window
-WINDOW_SIZE = (900, 900) # (Width, Heigth)
-#WINDOW_SIZE = (600, 600) # (Width, Heigth)
+#WINDOW_SIZE = (900, 900) # (Width, Heigth)
+WINDOW_SIZE = (600, 600) # (Width, Heigth)
 #WINDOW_SIZE = (400, 400) # (Width, Heigth)
 
 WIDTH = WINDOW_SIZE[0]
@@ -12,7 +12,8 @@ HEIGTH = WINDOW_SIZE[1]
 
 FPS = 60
 
-NUM_COLS, NUM_ROWS = 60, 60
+#NUM_COLS, NUM_ROWS = 60, 60
+NUM_COLS, NUM_ROWS = 30, 30
 #NUM_COLS, NUM_ROWS = 6, 6
 #NUM_COLS, NUM_ROWS = 10, 10
 

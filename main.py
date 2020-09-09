@@ -163,7 +163,8 @@ def a_star_pathfinding(start_flag, start, end):
                         neighbor.prev = current
             return flag
         else:
-            print("Not solution was foun for the current configuration.")
+            print("No solution was found for the current configuration.")
+            return -1
 
 
 
@@ -180,6 +181,8 @@ def main():
     start_point_chosen_flag  = False
     end_point_chosen_flag    = False
     result_flag              = False
+
+    start_time               = None
 
     while True:
         for event in pygame.event.get():
@@ -206,6 +209,7 @@ def main():
                 # Start the visualizer
                 if event.key == pygame.K_RETURN:
                     start_flag = True
+                    start_time = pygame.time.get_ticks()
                 if event.key == pygame.K_s: # Draw starting node on the board with (s) key
                     if not start_point_chosen_flag:
                         x_pos = math.floor(pygame.mouse.get_pos()[0]//get_width())
@@ -226,7 +230,9 @@ def main():
 
         # start pathfinding
         if start_flag:
-            a_star_pathfinding(start_flag, STARTING_POINT, END_POINT)
+            result = a_star_pathfinding(start_flag, STARTING_POINT, END_POINT)
+            if result == -1:
+                start_flag = False
 
 
         # Draw the current squares colors to the window
@@ -249,6 +255,7 @@ def main():
         # Highlight the final path
         for square in PATH:
             square.draw(window, config.LIGHT_BLUE)
+            start_flag = False
         pygame.display.flip()
         clock.tick(config.FPS) # Limit to 60 frames per second
 
