@@ -1,6 +1,6 @@
 # Created by Emanuel Ramirez on 09/08/2020
 
-import pygame, math, sys, time
+import pygame, math, random, sys, time
 import config
 
 # TODO: Refactor this later to make it mora pythonic!!!
@@ -93,7 +93,7 @@ def build_neighbors_grid():
             GRID[i][j].add_neighbors(GRID)
 
 
-def build_initial_board():
+def build_initial_grid():
     ''' Build the initial board state'''
     for col in range(config.NUM_COLS):
         array = []
@@ -102,11 +102,15 @@ def build_initial_board():
         GRID.append(array)
 
 
-def draw_wall(mouse_pos, state):
+def draw_wall(pos, state=None):
     ''' Add a wall flag to the specified mouse poisition'''
-    x_pos = mouse_pos[0]//get_width()
-    y_pos = mouse_pos[1]//get_width()
-    GRID[x_pos][y_pos].wall = True
+    if state is None:
+        GRID[pos[0]][pos[1]].wall = True
+    else:
+        x_pos = pos[0]//get_width()
+        y_pos = pos[1]//get_width()
+        GRID[x_pos][y_pos].wall = True
+
 
 
 def heuristics(a, b):
@@ -142,6 +146,7 @@ def a_star_pathfinding(start_flag, start, end):
                 CLOSED_SET.append(current)
 
                 for neighbor in current.neighbors:
+                    #time.sleep(-time.time()%1)
                     if neighbor in CLOSED_SET or neighbor.wall:
                         continue
                     tempG = current.g + 1
@@ -157,15 +162,13 @@ def a_star_pathfinding(start_flag, start, end):
                         OPEN_SET.append(neighbor)
 
                     if newPath:
-                        #print(f'Neighbor: {neighbor} | End: {end}')
                         neighbor.h = heuristics(neighbor, end)
                         neighbor.f = neighbor.g + neighbor.h
                         neighbor.prev = current
-            return flag
         else:
             print("No solution was found for the current configuration.")
             return -1
-
+        return flag
 
 
 def main():
@@ -174,7 +177,7 @@ def main():
     window = pygame.display.set_mode(config.WINDOW_SIZE)
     pygame.display.set_caption("A* Pathfinding Visualizer by Emanuel Ramirez")
 
-    build_initial_board()
+    build_initial_grid()
     build_neighbors_grid()
 
     start_flag               = False
@@ -192,6 +195,7 @@ def main():
             # Mouse click events
             if event.type == pygame.MOUSEBUTTONUP:
                 if pygame.mouse.get_pressed(0):
+                    #print(f'X position: {pygame.mouse.get_pos()[0]} | Y position: {pygame.mouse.get_pos()[1]}')
                     draw_wall(pygame.mouse.get_pos(), True)
                 if pygame.mouse.get_pressed(2):
                     draw_wall(pygame.mouse.get_pos(), False)
@@ -210,6 +214,9 @@ def main():
                 if event.key == pygame.K_RETURN:
                     start_flag = True
                     start_time = pygame.time.get_ticks()
+                # TODO: Eventually will be the maze generation keybinding
+                if event.key == pygame.K_m:
+                    pass
                 if event.key == pygame.K_s: # Draw starting node on the board with (s) key
                     if not start_point_chosen_flag:
                         x_pos = math.floor(pygame.mouse.get_pos()[0]//get_width())
@@ -235,11 +242,15 @@ def main():
                 start_flag = False
 
 
+
+
         # Draw the current squares colors to the window
         window.fill((0, 0, 20))
         for i in range(config.NUM_COLS):
             for j in range(config.NUM_ROWS):
                 square = GRID[j][i]
+
+
                 if square.color == config.LIGHT_BLUE:
                     square.draw(window, config.LIGHT_BLUE)
                 elif square in CLOSED_SET:
@@ -252,10 +263,25 @@ def main():
                     square.draw(window, config.BLACK)
                 else:
                     square.draw(window, config.WHITE)
+
         # Highlight the final path
         for square in PATH:
             square.draw(window, config.LIGHT_BLUE)
             start_flag = False
+
+        # Display coordinates of each square in the grid
+        # Currently hardcoded for the size and position.
+        # TODO: Fix this
+        for i in range(0, config.WINDOW_SIZE[0], get_width()):
+            for j in range(0, config.WINDOW_SIZE[1], get_width()):
+                if GRID[i//get_width()][j//get_width()].color == config.LIGHT_BLUE:
+                    text = config.FONT.render(f'{i}, {j}', True, config.YELLOW)
+                else:
+                    text = config.FONT.render(f'({i}, {j})', True, config.LIGHT_BLUE)
+                textRect = text.get_rect()
+                textRect.center = (i+25, j+10)
+                window.blit(text, textRect)
+
         pygame.display.flip()
         clock.tick(config.FPS) # Limit to 60 frames per second
 

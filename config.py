@@ -1,21 +1,20 @@
 # Created by Emanuel Ramirez on 09/08/2020
 
+from pygame import font
+
 ''' Contains all the technical configurations of the game'''
 
 # Size of the pygame window
 WINDOW_SIZE = (900, 900) # (Width, Heigth)
-#WINDOW_SIZE = (600, 600) # (Width, Heigth)
-#WINDOW_SIZE = (400, 400) # (Width, Heigth)
 
+# Width and heigth of the pygame window
 WIDTH = WINDOW_SIZE[0]
 HEIGTH = WINDOW_SIZE[1]
 
-FPS = 60
+NUM_COLS, NUM_ROWS = 15, 15
 
-NUM_COLS, NUM_ROWS = 60, 60
-#NUM_COLS, NUM_ROWS = 30, 30
-#NUM_COLS, NUM_ROWS = 6, 6
-#NUM_COLS, NUM_ROWS = 10, 10
+
+FPS = 60
 
 
 # RGB values
@@ -28,3 +27,9 @@ LIGHT_GREEN = (74, 200, 36)
 DARK_GREEN = (43, 133, 16)
 BLUE = (0, 0, 255)
 LIGHT_BLUE = (0, 100, 255)
+YELLOW = (255, 255, 0)
+
+
+# Pygame font initialization
+font.init()
+FONT = font.Font(font.get_default_font(), 10)
