@@ -23,6 +23,10 @@ pip install -r requirements.txt
 
 &nbsp;
 &nbsp;
+![Coordinate update](videos/coordinateUpdate.gif)
+
+&nbsp;
+&nbsp;
 
 ![Random case1](videos/case1.gif)
 
