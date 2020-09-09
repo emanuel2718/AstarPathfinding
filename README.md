@@ -17,6 +17,17 @@ Install requirements
 pip install -r requirements.txt
 ```
 
+## Preview
+
+- Draw unique walls combinations and start the visualization
+![alt text](https://github.com/emanuel2718/AstarPathfinding/videos/example_usage.gif)
+
+- Random case 1
+![alt text](https://github.com/emanuel2718/AstarPathfinding/videos/case1.gif)
+
+- Random case 2
+![alt text](https://github.com/emanuel2718/AstarPathfinding/videos/case2.gif)
+
 
 ## How to use
 ```bash
