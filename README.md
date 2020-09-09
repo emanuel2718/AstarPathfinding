@@ -19,14 +19,13 @@ pip install -r requirements.txt
 
 ## Preview
 
-- Draw unique walls combinations and start the visualization
 ![Example usage](videos/example_usage.gif)
 
-- Random case 1
+&nbsp;
+&nbsp;
+
 ![Random case1](videos/case1.gif)
 
-- Random case 2
-![Random case2](videos/case2.gif)
 
 
 ## How to use
