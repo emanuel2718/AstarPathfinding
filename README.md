@@ -19,10 +19,6 @@ pip install -r requirements.txt
 
 ## Preview
 
-![Example usage](videos/example_usage.gif)
-
-&nbsp;
-&nbsp;
 ![Coordinate update](videos/coordinateUpdate.gif)
 
 &nbsp;
