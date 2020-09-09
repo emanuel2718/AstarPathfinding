@@ -232,15 +232,18 @@ def main():
                 if square.color == config.LIGHT_BLUE:
                     square.draw(window, config.LIGHT_BLUE)
                 elif square in CLOSED_SET:
-                    square.draw(window, config.RED)
+                    square.draw(window, config.LIGHT_RED)
                 elif square in OPEN_SET:
-                    square.draw(window, config.GREEN)
+                    square.draw(window, config.LIGHT_GREEN)
                 elif square.color == config.GREEN:
                     square.draw(window, config.GREEN)
                 elif square.color == config.BLACK:
                     square.draw(window, config.BLACK)
                 else:
                     square.draw(window, config.WHITE)
+        # Highlight the final path
+        for square in PATH:
+            square.draw(window, config.LIGHT_BLUE)
         pygame.display.flip()
 
 
