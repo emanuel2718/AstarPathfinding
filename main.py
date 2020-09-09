@@ -13,6 +13,8 @@ STARTING_POINT = None
 END_POINT      = None
 
 
+clock = pygame.time.Clock()
+
 
 class Square:
     def __init__(self, x, y):
@@ -169,7 +171,7 @@ def main():
     ''' Program driver'''
     pygame.init()
     window = pygame.display.set_mode(config.WINDOW_SIZE)
-    pygame.display.set_caption("A* Pathfinding Visualizer")
+    pygame.display.set_caption("A* Pathfinding Visualizer by Emanuel Ramirez")
 
     build_initial_board()
     build_neighbors_grid()
@@ -184,13 +186,17 @@ def main():
             if event.type == pygame.QUIT:
                 close_game()
 
+            # Mouse click events
             if event.type == pygame.MOUSEBUTTONUP:
                 if pygame.mouse.get_pressed(0):
                     draw_wall(pygame.mouse.get_pos(), True)
+                if pygame.mouse.get_pressed(2):
+                    draw_wall(pygame.mouse.get_pos(), False)
 
                 if pygame.mouse.get_pressed(2):
                     draw_wall(pygame.mouse.get_pos(), False)
 
+            # Mouse click and drag events
             if event.type == pygame.MOUSEMOTION:
                 if pygame.mouse.get_pressed()[0]:
                     draw_wall(pygame.mouse.get_pos(), True)
@@ -215,7 +221,6 @@ def main():
                         y_pos = math.floor(pygame.mouse.get_pos()[1]//get_width())
                         square = GRID[x_pos][y_pos]
                         END_POINT = square
-                        print(f'End point: {END_POINT}')
                         square.draw(window, config.LIGHT_BLUE)
                         end_point_chosen_flag = True
 
@@ -245,6 +250,7 @@ def main():
         for square in PATH:
             square.draw(window, config.LIGHT_BLUE)
         pygame.display.flip()
+        clock.tick(config.FPS) # Limit to 60 frames per second
 
 
 def close_game():
