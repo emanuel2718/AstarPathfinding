@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # Created by Emanuel Ramirez on 09/08/2020
 
 import pygame, math, random, sys, time
@@ -12,6 +14,9 @@ PATH       = []
 # Initial starting and ending squares
 STARTING_POINT = None
 END_POINT      = None
+
+DIAGONALS = False # Will decide if the A* algorithm uses diagonal movement as valid or not.
+                  # set as command line argument '-d'
 
 
 clock = pygame.time.Clock()
@@ -68,22 +73,22 @@ class Square:
             self.neighbors.append(GRID[self.x][self.y-1])
 
 
-        # TODO: Make diagonals optional
-        # North-East neighbor
-        if self.x < config.NUM_COLS - 1 and self.y < config.NUM_ROWS - 1:
-            self.neighbors.append(GRID[self.x+1][self.y+1])
+        if DIAGONALS:
+            # North-East neighbor
+            if self.x < config.NUM_COLS - 1 and self.y < config.NUM_ROWS - 1:
+                self.neighbors.append(GRID[self.x+1][self.y+1])
 
-        # South-East neighbor
-        if self.x < config.NUM_COLS - 1 and self.y > 0:
-            self.neighbors.append(GRID[self.x+1][self.y-1])
+            # South-East neighbor
+            if self.x < config.NUM_COLS - 1 and self.y > 0:
+                self.neighbors.append(GRID[self.x+1][self.y-1])
 
-        # North-West neighbor
-        if self.x > 0 and self.y > config.NUM_ROWS - 1:
-            self.neighbors.append(GRID[self.x-1][self.y+1])
+            # North-West neighbor
+            if self.x > 0 and self.y > config.NUM_ROWS - 1:
+                self.neighbors.append(GRID[self.x-1][self.y+1])
 
-        # South-West neighbor
-        if self.x > 0 and self.y > 0:
-            self.neighbors.append(GRID[self.x-1][self.y-1])
+            # South-West neighbor
+            if self.x > 0 and self.y > 0:
+                self.neighbors.append(GRID[self.x-1][self.y-1])
 
 
 
@@ -329,4 +334,10 @@ def close_game():
 
 
 if __name__ == '__main__':
+    for arg in sys.argv:
+        # Diagonal flag
+        if arg == '-d':
+            print('\nNote: Diagonal neighbors will be considered during the A* algorithm.\n')
+            DIAGONALS = True
+
     main()

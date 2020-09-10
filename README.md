@@ -29,15 +29,25 @@ pip install -r requirements.txt
 
 
 ## How to use
+Run the visualizer:
 ```bash
 python main.py
 ```
+### Command line argument options:
 
-##### Add starting node
-- `s`  key and hover over desired square
+Diagonal movement during the A* star algorithm
+```bash
+python main.py -d
+```
 
-##### Add ending node
-- `e`  key and hover over desired square
+&nbsp;
+### Keybindings:
 
-##### Add walls (obstacles)
-- Click or drag over desired squares
+- `s` : Add starting node (hover over desired square and press the key)
+
+- `e` : Add ending node (hover over desired square and press the key)
+
+- `c` : Toogle on/off the coordinate system on the grid
+
+- click or drag: Add walls (obstacles)
+
