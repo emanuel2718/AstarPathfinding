@@ -3,12 +3,13 @@
 import pygame, math, random, sys, time
 import config
 
-# TODO: Refactor this later to make it mora pythonic!!!
-# TODO: Propler docstrings
-GRID = []
-OPEN_SET, CLOSED_SET = [], []
-PATH = []
+# TODO: Refactor this later to make it more pythonic!!!
+OPEN_SET   = [] # All the squares being cosidered to find the shortest path
+CLOSED_SET = [] # All the square NOT being cosidered anymore
+GRID       = []
+PATH       = []
 
+# Initial starting and ending squares
 STARTING_POINT = None
 END_POINT      = None
 
@@ -17,24 +18,39 @@ clock = pygame.time.Clock()
 
 
 class Square:
+
     def __init__(self, x, y):
+        ''' Initialize a single square on the grid'''
         self.x = x # x coordinate
         self.y = y # y coordinate
-        self.g = 0 # Distance from current node to starting node
-        self.h = 0 # Distance from current node to end node
-        self.f = 0 # g_total + h_total
+        self.g = 0 # Distance from current square to starting square
+        self.h = 0 # Distance from current square to end square
+        self.f = 0 # Score of the square: g_total + h_total
         self.color = None
         self.neighbors = []
         self.wall = False
         self.prev = None
 
+
     def draw(self, window, color):
+        ''' Color each square white or black. If the square represents a wall,
+            then it shall be colored BLACK. If it is a normal square; WHITE.
+
+        @param: pygame.display, tuple: window object and RGB hex tuple
+        '''
         self.color = color
         if self.wall:
-            self.color = config.BLACK
+            self.color = config.BLACK # Current square is a wall. Make it black!
         pygame.draw.rect(window, color, (self.x*get_width(), self.y*get_heigth(), get_width()-1, get_heigth()-1), 0)
 
+
     def add_neighbors(self, grid):
+        ''' Add the respective neighbors of the current square to the neighbor list
+            when creating the neighbor grid list.
+
+        @param: list: grid itself
+        '''
+
         # East neighbor
         if self.x < config.NUM_COLS - 1:
             self.neighbors.append(GRID[self.x+1][self.y])
@@ -52,6 +68,7 @@ class Square:
             self.neighbors.append(GRID[self.x][self.y-1])
 
 
+        # TODO: Make diagonals optional
         # North-East neighbor
         if self.x < config.NUM_COLS - 1 and self.y < config.NUM_ROWS - 1:
             self.neighbors.append(GRID[self.x+1][self.y+1])
@@ -69,9 +86,10 @@ class Square:
             self.neighbors.append(GRID[self.x-1][self.y-1])
 
 
-# With a Screen Width of 900 and 60 columns ---> square width = 15
+
 def get_width():
     ''' Returns the width of each square on the board
+        With a Screen Width of 900 and 60 columns ---> square width = 15
 
     @return: int: width of each square
     '''
@@ -80,6 +98,7 @@ def get_width():
 
 def get_heigth():
     ''' Returns the heigth of each square on the board
+        With a Screen Height of 900 and 60 rows ---> square width = 15
 
     @return: int: heigth of each square
     '''
@@ -102,14 +121,14 @@ def build_initial_grid():
         GRID.append(array)
 
 
-def draw_wall(pos, state=None):
-    ''' Add a wall flag to the specified mouse poisition'''
-    if state is None:
-        GRID[pos[0]][pos[1]].wall = True
-    else:
-        x_pos = pos[0]//get_width()
-        y_pos = pos[1]//get_width()
-        GRID[x_pos][y_pos].wall = True
+def draw_wall(mouse_pos):
+    ''' Add a wall flag to given specified mouse position.
+
+    @param: tuple: registered mouse click position on the screen range of [0, WINDOW_SIZE]
+    '''
+
+    x_pos, y_pos = mouse_pos[0]//get_width(), mouse_pos[1]//get_width()
+    GRID[x_pos][y_pos].wall = True
 
 
 
@@ -121,55 +140,55 @@ def heuristics(a, b):
 def a_star_pathfinding(start_flag, start, end):
     ''' TODO: Think about a concise A* star explanation'''
     flag = False
-    if not flag:
-        if len(OPEN_SET) > 0:
-            winner = 0
-            for i in range(len(OPEN_SET)):
-                if OPEN_SET[i].f < OPEN_SET[winner].f:
-                    winner = i
-            current = OPEN_SET[winner]
+    if len(OPEN_SET) > 0:
+        winner = 0
+        for i in range(len(OPEN_SET)):
+            if OPEN_SET[i].f < OPEN_SET[winner].f:
+                winner = i
+        current = OPEN_SET[winner]
 
-            if current == end:
-                temp = current
-                while temp.prev:
-                    PATH.append(temp.prev)
-                    temp = temp.prev
-                if not flag:
-                    flag = True
-                    #print("We are done here!")
-                    return
-                elif flag:
-                    return
-
+        if current == end:
+            temp = current
+            while temp.prev:
+                PATH.append(temp.prev)
+                temp = temp.prev
             if not flag:
-                OPEN_SET.remove(current)
-                CLOSED_SET.append(current)
+                flag = True
+                return
+            elif flag:
+                return
 
-                for neighbor in current.neighbors:
-                    #time.sleep(-time.time()%1)
-                    if neighbor in CLOSED_SET or neighbor.wall:
-                        continue
-                    tempG = current.g + 1
+        if not flag:
+            OPEN_SET.remove(current)
+            CLOSED_SET.append(current)
 
-                    newPath =  False
-                    if neighbor in OPEN_SET:
-                        if tempG < neighbor.g:
-                            neighbor.g = tempG
-                            newPath = True
-                    else:
+            for neighbor in current.neighbors:
+                #time.sleep(-time.time()%1)
+                if neighbor in CLOSED_SET or neighbor.wall:
+                    continue
+                tempG = current.g + 1
+
+                newPath =  False
+                if neighbor in OPEN_SET:
+                    if tempG < neighbor.g:
                         neighbor.g = tempG
                         newPath = True
-                        OPEN_SET.append(neighbor)
+                else:
+                    neighbor.g = tempG
+                    newPath = True
+                    OPEN_SET.append(neighbor)
 
-                    if newPath:
-                        neighbor.h = heuristics(neighbor, end)
-                        neighbor.f = neighbor.g + neighbor.h
-                        neighbor.prev = current
-        else:
-            print("No solution was found for the current configuration.")
-            return -1
-        return flag
+                if newPath:
+                    neighbor.h = heuristics(neighbor, end)
+                    neighbor.f = neighbor.g + neighbor.h
+                    neighbor.prev = current
+    else:
+        print("No solution was found for the current configuration.")
+        return -1
+    return flag
 
+
+#TODO: Make it possible for resize of text and center the coordinates on the squares.
 def toogle_coordinates(window):
     ''' Toogles on the coordinate system on the grid.
 
@@ -180,10 +199,16 @@ def toogle_coordinates(window):
             if GRID[i//get_width()][j//get_width()].color == config.LIGHT_BLUE:
                 text = config.FONT.render(f'{i}, {j}', True, config.YELLOW)
             else:
-                text = config.FONT.render(f'({i}, {j})', True, config.LIGHT_BLUE)
+                text = config.FONT.render(f'{i}, {j}', True, config.LIGHT_BLUE)
             textRect = text.get_rect()
             textRect.center = (i+25, j+10)
             window.blit(text, textRect)
+
+def toogle_square_scores(window):
+    # TODO: show the F score in the upper right.
+    #       show the G score in the bootom left
+    #       show the H score in the bootom right
+    pass
 
 
 def main():
@@ -195,6 +220,7 @@ def main():
     build_initial_grid()
     build_neighbors_grid()
 
+    # FLAGS
     start_flag               = False
     start_point_chosen_flag  = False
     end_point_chosen_flag    = False
@@ -212,17 +238,15 @@ def main():
             if event.type == pygame.MOUSEBUTTONUP:
                 if pygame.mouse.get_pressed(0):
                     #print(f'X position: {pygame.mouse.get_pos()[0]} | Y position: {pygame.mouse.get_pos()[1]}')
-                    draw_wall(pygame.mouse.get_pos(), True)
-                if pygame.mouse.get_pressed(2):
-                    draw_wall(pygame.mouse.get_pos(), False)
+                    draw_wall(pygame.mouse.get_pos())
+                #if pygame.mouse.get_pressed(2):
+                #    draw_wall(pygame.mouse.get_pos(), False)
 
-                if pygame.mouse.get_pressed(2):
-                    draw_wall(pygame.mouse.get_pos(), False)
 
             # Mouse click and drag events
             if event.type == pygame.MOUSEMOTION:
                 if pygame.mouse.get_pressed()[0]:
-                    draw_wall(pygame.mouse.get_pos(), True)
+                    draw_wall(pygame.mouse.get_pos())
 
 
             if event.type == pygame.KEYDOWN:
@@ -264,14 +288,11 @@ def main():
                 start_flag = False
 
 
-
-
         # Draw the current squares colors to the window
         window.fill((0, 0, 20))
         for i in range(config.NUM_COLS):
             for j in range(config.NUM_ROWS):
                 square = GRID[j][i]
-
 
                 if square.color == config.LIGHT_BLUE:
                     square.draw(window, config.LIGHT_BLUE)
@@ -286,11 +307,13 @@ def main():
                 else:
                     square.draw(window, config.WHITE)
 
+
         # Highlight the final path
         for square in PATH:
             square.draw(window, config.LIGHT_BLUE)
             start_flag = False
 
+        # Toogle coordinates on screen
         if show_coordinates_flag:
             toogle_coordinates(window)
 
