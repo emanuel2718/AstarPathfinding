@@ -170,6 +170,21 @@ def a_star_pathfinding(start_flag, start, end):
             return -1
         return flag
 
+def toogle_coordinates(window):
+    ''' Toogles on the coordinate system on the grid.
+
+    @param: pygame.display: game window object
+    '''
+    for i in range(0, config.WINDOW_SIZE[0], get_width()):
+        for j in range(0, config.WINDOW_SIZE[1], get_width()):
+            if GRID[i//get_width()][j//get_width()].color == config.LIGHT_BLUE:
+                text = config.FONT.render(f'{i}, {j}', True, config.YELLOW)
+            else:
+                text = config.FONT.render(f'({i}, {j})', True, config.LIGHT_BLUE)
+            textRect = text.get_rect()
+            textRect.center = (i+25, j+10)
+            window.blit(text, textRect)
+
 
 def main():
     ''' Program driver'''
@@ -184,6 +199,7 @@ def main():
     start_point_chosen_flag  = False
     end_point_chosen_flag    = False
     result_flag              = False
+    show_coordinates_flag    = False
 
     start_time               = None
 
@@ -217,6 +233,12 @@ def main():
                 # TODO: Eventually will be the maze generation keybinding
                 if event.key == pygame.K_m:
                     pass
+                # Toogle key for the coordinate system on the grid
+                if event.key == pygame.K_c:
+                    if not show_coordinates_flag:
+                        show_coordinates_flag = True
+                    else:
+                        show_coordinates_flag = False
                 if event.key == pygame.K_s: # Draw starting node on the board with (s) key
                     if not start_point_chosen_flag:
                         x_pos = math.floor(pygame.mouse.get_pos()[0]//get_width())
@@ -269,18 +291,8 @@ def main():
             square.draw(window, config.LIGHT_BLUE)
             start_flag = False
 
-        # Display coordinates of each square in the grid
-        # Currently hardcoded for the size and position.
-        # TODO: Fix this
-        for i in range(0, config.WINDOW_SIZE[0], get_width()):
-            for j in range(0, config.WINDOW_SIZE[1], get_width()):
-                if GRID[i//get_width()][j//get_width()].color == config.LIGHT_BLUE:
-                    text = config.FONT.render(f'{i}, {j}', True, config.YELLOW)
-                else:
-                    text = config.FONT.render(f'({i}, {j})', True, config.LIGHT_BLUE)
-                textRect = text.get_rect()
-                textRect.center = (i+25, j+10)
-                window.blit(text, textRect)
+        if show_coordinates_flag:
+            toogle_coordinates(window)
 
         pygame.display.flip()
         clock.tick(config.FPS) # Limit to 60 frames per second
