@@ -2,8 +2,10 @@
 
 # Created by Emanuel Ramirez on 09/08/2020
 
-import pygame, math, random, sys, time
 import config
+import pygame, math, random, sys, time
+import tkinter as tk
+
 
 # TODO: Refactor this later to make it more pythonic!!!
 OPEN_SET   = [] # All the squares being cosidered to find the shortest path
@@ -17,6 +19,14 @@ END_POINT      = None
 
 DIAGONALS = False # Will decide if the A* algorithm uses diagonal movement as valid or not.
                   # set as command line argument '-d'
+
+FLAGS = {'start_flag': False,
+         'start_point_chose_flag': False,
+         'end_point_chosen_flag': False,
+         'result_flag': False,
+         'show_coordinates_flag': False,
+         'visualization_terminated': False,
+         'game_restarted_flag': False}
 
 
 clock = pygame.time.Clock()
@@ -234,10 +244,30 @@ def toogle_square_scores(window):
 
 
 def reset_game():
-    # TODO: Implement this
-    # Go through all the squares and make them white and .wall == off
-    # Might need to reset al the flags
-    pass
+    # reset the starting nodes
+    STARTING_POINT = None
+    END_POINT      = None
+
+    # Empty the current sets, path, and grid lists
+    OPEN_SET.clear()
+    CLOSED_SET.clear()
+    PATH.clear()
+    GRID.clear()
+
+    # Build a new grid and neighbor's grid state
+    build_initial_grid()
+    build_neighbors_grid()
+
+    # remove all the walls and change every square to white
+    for col in range(config.NUM_COLS):
+        for row in range(config.NUM_ROWS):
+            GRID[col][row].wall = False
+            GRID[col][row].color = config.WHITE
+
+    # reset all the flags
+    for flag, value in FLAGS.items():
+        FLAGS.update({flag: False})
+    return
 
 
 def render_current_grid(window):
@@ -247,7 +277,6 @@ def render_current_grid(window):
         for j in range(config.NUM_ROWS):
 
             square = GRID[j][i]
-
             if square.color == config.LIGHT_BLUE:
                 square.draw(window, config.LIGHT_BLUE)
             elif square in CLOSED_SET:
@@ -270,13 +299,6 @@ def main():
 
     build_initial_grid()
     build_neighbors_grid()
-
-    # FLAGS
-    start_flag               = False
-    start_point_chosen_flag  = False
-    end_point_chosen_flag    = False
-    result_flag              = False
-    show_coordinates_flag    = False
 
     start_time               = None
 
@@ -308,49 +330,68 @@ def main():
             if event.type == pygame.KEYDOWN:
                 # Start the visualizer
                 if event.key == pygame.K_RETURN:
-                    start_flag = True
+                    FLAGS.update({'start_flag': True})
                     start_time = pygame.time.get_ticks()
+
                 # TODO: Eventually will be the maze generation keybinding
                 if event.key == pygame.K_m:
                     pass
+
                 # Toogle key for the coordinate system on the grid
                 if event.key == pygame.K_c:
-                    if not show_coordinates_flag:
-                        show_coordinates_flag = True
+                    if not FLAGS.get('show_coordinates_flag'):
+                        FLAGS.update({'show_coordinates_flag': True})
                     else:
-                        show_coordinates_flag = False
+                        FLAGS.update({'show_coordinates_flag': False})
+
+                # L_Shift + R will reset back to the initial grid state
+                if event.key == pygame.K_r and pygame.key.get_mods() & pygame.KMOD_LSHIFT:
+                    FLAGS.update({'start_flag': False})
+                    reset_game()
 
                 if event.key == pygame.K_s: # Draw starting node on the board with (s) key
-                    if not start_point_chosen_flag:
+                    if not FLAGS.get('start_point_chosen_flag'):
                         position = get_square_pos_from_mouse(pygame.mouse.get_pos())
                         STARTING_POINT = GRID[position[0]][position[1]]
                         OPEN_SET.append(STARTING_POINT) # Add starting node to the open set
                         STARTING_POINT.draw(window, config.GREEN)
-                        start_point_chosen_flag = True
+                        FLAGS.update({'start_point_chosen_flag': True})
 
                 if event.key == pygame.K_e: # Draw end node on the board with (e) key
-                    if not end_point_chosen_flag:
+                    if not FLAGS.get('end_point_chosen_flag'):
                         position = get_square_pos_from_mouse(pygame.mouse.get_pos())
                         END_POINT = GRID[position[0]][position[1]]
                         END_POINT.draw(window, config.LIGHT_BLUE)
-                        end_point_chosen_flag = True
+                        FLAGS.update({'end_point_chosen_flag': True})
+
 
         # start pathfinding
-        if start_flag:
-            result = a_star_pathfinding(start_flag, STARTING_POINT, END_POINT)
-            if result == -1:
-                start_flag = False
+        if FLAGS.get('start_flag'):
+            a_star_pathfinding(True, STARTING_POINT, END_POINT)
+            #result = a_star_pathfinding(True, STARTING_POINT, END_POINT)
+            #if result == -1:
+            #    FLAGS.update({'start_flag': False})
 
         # Draw the current squares colors to the window
         render_current_grid(window)
 
+
         # Highlight the final path
-        for square in PATH:
-            square.draw(window, config.LIGHT_BLUE)
-            start_flag = False
+        for i, square in enumerate(PATH):
+            if i == 0:
+                FLAGS.update({'start_flag': False})
+            # TODO: This is temporary
+            # Way to let the prgram know that the algorithm has stopped running.
+            if i == len(PATH)-1 and not FLAGS.get('visualization_terminated'):
+                FLAGS.update({'visualization_terminated': True})
+                print('A* Pathfinding visualization has terminated. Press Left Shift + R to reset the grid.')
+            #square.draw(window, config.LIGHT_BLUE)
+            GRID[square.x][square.y].color = config.LIGHT_BLUE
+
 
         # Toogle coordinates on screen
-        if show_coordinates_flag:
+        if FLAGS.get('show_coordinates_flag'):
+        #if show_coordinates_flag:
             toogle_coordinates(window)
 
         pygame.display.flip()

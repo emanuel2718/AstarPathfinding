@@ -54,6 +54,8 @@ python main.py -d
 
 ## TODO:
 
+- [ ] Fix bug of inserting node on a wall (This should not be possible)
+- [ ] Put all the current colors of the squares in a dictionary
 - [ ] Reset visualizer option
 - [ ] Make a noticable notification for No solution found case and ended visualization (Maybe use Tkinter)
 - [ ] Show time it took to find the path
