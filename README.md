@@ -1,6 +1,9 @@
-# A* Pathfinding visualizer
-The idea of this project is for it to be a interesting new way to teach myself more advanced algorithms.Starting with A* pathfinding algorithm.
+<h1 align="center" style="font-size: 3rem;">
+A* Visualizer
+</h1>
 
+
+*insert some project description here*
 
 ## Installation
 
@@ -49,6 +52,8 @@ python main.py -d
 
 - `c` : Toogle on/off the coordinate system on the grid
 
+- `L_Shift+R` : Restart the game
+
 - Left click or drag: Add walls (obstacles)
 - Right click or drag: Remove walls
 
@@ -60,6 +65,7 @@ python main.py -d
 - [ ] Make a noticable notification for No solution found case and ended visualization (Maybe use Tkinter)
 - [ ] Show time it took to find the path
 - [ ] Add option for A* algorithm G, H and F scores on each square
+- [ ] Make a separate window to handle the settings such as diagonals, coordinates etc.
 
 
 
