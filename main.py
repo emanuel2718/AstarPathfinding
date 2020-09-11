@@ -20,13 +20,24 @@ END_POINT      = None
 DIAGONALS = False # Will decide if the A* algorithm uses diagonal movement as valid or not.
                   # set as command line argument '-d'
 
-FLAGS = {'start_flag': False,
-         'start_point_chose_flag': False,
-         'end_point_chosen_flag': False,
-         'result_flag': False,
-         'show_coordinates_flag': False,
-         'visualization_terminated': False,
-         'game_restarted_flag': False}
+FLAGS = {'start_flag'               : False,
+         'start_point_chose_flag'   : False,
+         'end_point_chosen_flag'    : False,
+         'result_flag'              : False,
+         'show_coordinates_flag'    : False,
+         'visualization_terminated' : False,
+         'game_restarted_flag'      : False}
+
+COLORS = {'empty_color'             : config.WHITE,
+          'wall_color'              : config.BLACK,
+          'start_color'             : config.GREEN,
+          'end_color'               : config.BLUE,
+          'openset_color'           : config.LIGHT_GREEN,
+          'closedset_color'         : config.LIGHT_RED,
+          'path_color'              : config.LIGHT_BLUE,
+          'coord_path_color'        : config.YELLOW,
+          'coord_normal_color'      : config.LIGHT_BLUE}
+
 
 
 clock = pygame.time.Clock()
@@ -54,8 +65,6 @@ class Square:
         @param: pygame.display, tuple: window object and RGB hex tuple
         '''
         self.color = color
-        if self.wall:
-            self.color = config.BLACK # Current square is a wall. Make it black!
         pygame.draw.rect(window, color, (self.x*get_width(), self.y*get_heigth(), get_width()-1, get_heigth()-1), 0)
 
 
@@ -227,10 +236,12 @@ def toogle_coordinates(window):
     '''
     for i in range(0, config.WINDOW_SIZE[0], get_width()):
         for j in range(0, config.WINDOW_SIZE[1], get_width()):
-            if GRID[i//get_width()][j//get_width()].color == config.LIGHT_BLUE:
-                text = config.FONT.render(f'{i}, {j}', True, config.YELLOW)
+            #x_pos, y_pos = i//get_width(), j//get_heigth()
+            square = GRID[i//get_width()][j//get_heigth()]
+            if square.color == COLORS.get('path_color') or square.color == COLORS.get('end_color'):
+                text = config.FONT.render(f'{i}, {j}', True, COLORS.get('coord_path_color'))
             else:
-                text = config.FONT.render(f'{i}, {j}', True, config.LIGHT_BLUE)
+                text = config.FONT.render(f'{i}, {j}', True, COLORS.get('coord_normal_color'))
             textRect = text.get_rect()
             textRect.center = (i+25, j+10)
             window.blit(text, textRect)
@@ -262,7 +273,7 @@ def reset_game():
     for col in range(config.NUM_COLS):
         for row in range(config.NUM_ROWS):
             GRID[col][row].wall = False
-            GRID[col][row].color = config.WHITE
+            GRID[col][row].color = COLORS.get('empty_color')
 
     # reset all the flags
     for flag, value in FLAGS.items():
@@ -277,18 +288,26 @@ def render_current_grid(window):
         for j in range(config.NUM_ROWS):
 
             square = GRID[j][i]
-            if square.color == config.LIGHT_BLUE:
-                square.draw(window, config.LIGHT_BLUE)
-            elif square in CLOSED_SET:
-                square.draw(window, config.LIGHT_RED)
-            elif square in OPEN_SET:
-                square.draw(window, config.LIGHT_GREEN)
-            elif square.color == config.GREEN:
-                square.draw(window, config.GREEN)
-            elif square.wall:
-                square.draw(window, config.BLACK)
-            else:
-                square.draw(window, config.WHITE)
+            if square.color == COLORS.get('path_color'):               # PATH
+                square.draw(window, COLORS.get('path_color'))
+
+            elif square.color == COLORS.get('start_color'):            # START_POSITION
+                square.draw(window, COLORS.get('start_color'))
+
+            elif square.color == COLORS.get('end_color'):              # END_POSITION
+                square.draw(window, COLORS.get('end_color'))
+
+            elif square in CLOSED_SET:                                 # CLOSED_SET
+                square.draw(window, COLORS.get('closedset_color'))
+
+            elif square in OPEN_SET:                                   # OPEN_SET
+                square.draw(window, COLORS.get('openset_color'))
+
+            elif square.wall:                                          # WALL
+                square.draw(window, COLORS.get('wall_color'))
+
+            else:                                                      # EMPTY SQUARE
+                square.draw(window, COLORS.get('empty_color'))
 
 
 def main():
@@ -355,7 +374,7 @@ def main():
                         STARTING_POINT = GRID[position[0]][position[1]]
                         if not STARTING_POINT.wall:
                             OPEN_SET.append(STARTING_POINT)
-                            STARTING_POINT.color = config.GREEN
+                            STARTING_POINT.color = COLORS.get('start_color')
                             FLAGS.update({'start_point_chosen_flag': True})
                         else:
                             print('There is a wall in this square. Try another square.')
@@ -364,8 +383,9 @@ def main():
                     if not FLAGS.get('end_point_chosen_flag'):
                         position = get_square_pos_from_mouse(pygame.mouse.get_pos())
                         END_POINT = GRID[position[0]][position[1]]
-                        if not END_POINT.wall: # Check if selected square has a wall
-                            END_POINT.color = config.LIGHT_BLUE
+                        # check for wall or if starting node is present in the square
+                        if not END_POINT.wall:
+                            END_POINT.color = COLORS.get('end_color')
                             FLAGS.update({'end_point_chosen_flag': True})
                         else:
                             print('There is a wall in this square. Try another square.')
@@ -391,8 +411,7 @@ def main():
             if i == len(PATH)-1 and not FLAGS.get('visualization_terminated'):
                 FLAGS.update({'visualization_terminated': True})
                 print('A* Pathfinding visualization has terminated. Press Left Shift + R to reset the grid.')
-            #square.draw(window, config.LIGHT_BLUE)
-            GRID[square.x][square.y].color = config.LIGHT_BLUE
+            GRID[square.x][square.y].color = COLORS.get('path_color')
 
 
         # Toogle coordinates on screen

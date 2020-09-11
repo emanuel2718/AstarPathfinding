@@ -59,9 +59,8 @@ python main.py -d
 
 ## TODO:
 
-- [ ] Fix bug of inserting node on a wall (This should not be possible)
-- [ ] Put all the current colors of the squares in a dictionary
-- [ ] Reset visualizer option
+- [x] Put all the current colors of the squares in a dictionary for easy change of color choice
+- [x] Reset visualizer option
 - [ ] Make a noticable notification for No solution found case and ended visualization (Maybe use Tkinter)
 - [ ] Show time it took to find the path
 - [ ] Add option for A* algorithm G, H and F scores on each square
