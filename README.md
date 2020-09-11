@@ -51,3 +51,9 @@ python main.py -d
 
 - click or drag: Add walls (obstacles)
 
+## TODO:
+- [ ] Make a noticable notification for No solution found case and ended visualization (Maybe use Tkinter)
+- [ ] Add option for A* algorithm G, H and F scores on each square
+
+
+
