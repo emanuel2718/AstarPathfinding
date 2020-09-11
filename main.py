@@ -300,7 +300,7 @@ def main():
     build_initial_grid()
     build_neighbors_grid()
 
-    start_time               = None
+    start_time = None
 
     while True:
         for event in pygame.event.get():
@@ -353,16 +353,22 @@ def main():
                     if not FLAGS.get('start_point_chosen_flag'):
                         position = get_square_pos_from_mouse(pygame.mouse.get_pos())
                         STARTING_POINT = GRID[position[0]][position[1]]
-                        OPEN_SET.append(STARTING_POINT) # Add starting node to the open set
-                        STARTING_POINT.draw(window, config.GREEN)
-                        FLAGS.update({'start_point_chosen_flag': True})
+                        if not STARTING_POINT.wall:
+                            OPEN_SET.append(STARTING_POINT)
+                            STARTING_POINT.color = config.GREEN
+                            FLAGS.update({'start_point_chosen_flag': True})
+                        else:
+                            print('There is a wall in this square. Try another square.')
 
                 if event.key == pygame.K_e: # Draw end node on the board with (e) key
                     if not FLAGS.get('end_point_chosen_flag'):
                         position = get_square_pos_from_mouse(pygame.mouse.get_pos())
                         END_POINT = GRID[position[0]][position[1]]
-                        END_POINT.draw(window, config.LIGHT_BLUE)
-                        FLAGS.update({'end_point_chosen_flag': True})
+                        if not END_POINT.wall: # Check if selected square has a wall
+                            END_POINT.color = config.LIGHT_BLUE
+                            FLAGS.update({'end_point_chosen_flag': True})
+                        else:
+                            print('There is a wall in this square. Try another square.')
 
 
         # start pathfinding

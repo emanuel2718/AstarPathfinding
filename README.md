@@ -1,5 +1,5 @@
-<h1 align="center" style="font-size: 3rem;">
-A* Visualizer
+<h1 align="center" style="font-size: 2.5rem;">
+A* Pathfinding Visualizer
 </h1>
 
 
