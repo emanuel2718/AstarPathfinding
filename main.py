@@ -131,9 +131,25 @@ def draw_wall(mouse_pos):
 
     @param: tuple: registered mouse click position on the screen range of [0, WINDOW_SIZE]
     '''
-
     x_pos, y_pos = mouse_pos[0]//get_width(), mouse_pos[1]//get_width()
     GRID[x_pos][y_pos].wall = True
+
+
+def remove_wall(mouse_pos):
+    ''' Remove wall flag from the given specified mouse position.
+
+    @param: tuple: registered mouse click position on the screen range of [0, WINDOW_SIZE]
+    '''
+    x_pos, y_pos = mouse_pos[0]//get_width(), mouse_pos[1]//get_width()
+    GRID[x_pos][y_pos].wall = False
+
+
+def get_square_pos_from_mouse(mouse_pos):
+    ''' Receives current @mouse_pos and returns a scaled
+        tuple of X and Y positions of the square relative to the grid
+    '''
+    x_pos, y_pos = math.floor(mouse_pos[0]//get_width()), math.floor(mouse_pos[1]//get_width())
+    return (x_pos, y_pos)
 
 
 
@@ -209,11 +225,41 @@ def toogle_coordinates(window):
             textRect.center = (i+25, j+10)
             window.blit(text, textRect)
 
+
 def toogle_square_scores(window):
     # TODO: show the F score in the upper right.
     #       show the G score in the bootom left
     #       show the H score in the bootom right
     pass
+
+
+def reset_game():
+    # TODO: Implement this
+    # Go through all the squares and make them white and .wall == off
+    # Might need to reset al the flags
+    pass
+
+
+def render_current_grid(window):
+    ''' In charge of rendering the grid colors on the screen every tick'''
+    window.fill((0, 0, 20))
+    for i in range(config.NUM_COLS):
+        for j in range(config.NUM_ROWS):
+
+            square = GRID[j][i]
+
+            if square.color == config.LIGHT_BLUE:
+                square.draw(window, config.LIGHT_BLUE)
+            elif square in CLOSED_SET:
+                square.draw(window, config.LIGHT_RED)
+            elif square in OPEN_SET:
+                square.draw(window, config.LIGHT_GREEN)
+            elif square.color == config.GREEN:
+                square.draw(window, config.GREEN)
+            elif square.wall:
+                square.draw(window, config.BLACK)
+            else:
+                square.draw(window, config.WHITE)
 
 
 def main():
@@ -240,18 +286,23 @@ def main():
                 close_game()
 
             # Mouse click events
-            if event.type == pygame.MOUSEBUTTONUP:
-                if pygame.mouse.get_pressed(0):
-                    #print(f'X position: {pygame.mouse.get_pos()[0]} | Y position: {pygame.mouse.get_pos()[1]}')
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # Left click --> Add wall to square
+                if pygame.mouse.get_pressed()[0]:
                     draw_wall(pygame.mouse.get_pos())
-                #if pygame.mouse.get_pressed(2):
-                #    draw_wall(pygame.mouse.get_pos(), False)
+
+                # Right click --> Remove wall from square
+                if pygame.mouse.get_pressed()[2]:
+                    remove_wall(pygame.mouse.get_pos())
 
 
             # Mouse click and drag events
             if event.type == pygame.MOUSEMOTION:
-                if pygame.mouse.get_pressed()[0]:
+                if pygame.mouse.get_pressed()[0]: # Left click
                     draw_wall(pygame.mouse.get_pos())
+
+                if pygame.mouse.get_pressed()[2]: # Right click
+                    remove_wall(pygame.mouse.get_pos())
 
 
             if event.type == pygame.KEYDOWN:
@@ -268,22 +319,20 @@ def main():
                         show_coordinates_flag = True
                     else:
                         show_coordinates_flag = False
+
                 if event.key == pygame.K_s: # Draw starting node on the board with (s) key
                     if not start_point_chosen_flag:
-                        x_pos = math.floor(pygame.mouse.get_pos()[0]//get_width())
-                        y_pos = math.floor(pygame.mouse.get_pos()[1]//get_width())
-                        square = GRID[x_pos][y_pos]
-                        STARTING_POINT = square
-                        OPEN_SET.append(GRID[x_pos][y_pos]) # Add starting node to the open set
-                        square.draw(window, config.GREEN)
+                        position = get_square_pos_from_mouse(pygame.mouse.get_pos())
+                        STARTING_POINT = GRID[position[0]][position[1]]
+                        OPEN_SET.append(STARTING_POINT) # Add starting node to the open set
+                        STARTING_POINT.draw(window, config.GREEN)
                         start_point_chosen_flag = True
+
                 if event.key == pygame.K_e: # Draw end node on the board with (e) key
                     if not end_point_chosen_flag:
-                        x_pos = math.floor(pygame.mouse.get_pos()[0]//get_width())
-                        y_pos = math.floor(pygame.mouse.get_pos()[1]//get_width())
-                        square = GRID[x_pos][y_pos]
-                        END_POINT = square
-                        square.draw(window, config.LIGHT_BLUE)
+                        position = get_square_pos_from_mouse(pygame.mouse.get_pos())
+                        END_POINT = GRID[position[0]][position[1]]
+                        END_POINT.draw(window, config.LIGHT_BLUE)
                         end_point_chosen_flag = True
 
         # start pathfinding
@@ -292,26 +341,8 @@ def main():
             if result == -1:
                 start_flag = False
 
-
         # Draw the current squares colors to the window
-        window.fill((0, 0, 20))
-        for i in range(config.NUM_COLS):
-            for j in range(config.NUM_ROWS):
-                square = GRID[j][i]
-
-                if square.color == config.LIGHT_BLUE:
-                    square.draw(window, config.LIGHT_BLUE)
-                elif square in CLOSED_SET:
-                    square.draw(window, config.LIGHT_RED)
-                elif square in OPEN_SET:
-                    square.draw(window, config.LIGHT_GREEN)
-                elif square.color == config.GREEN:
-                    square.draw(window, config.GREEN)
-                elif square.color == config.BLACK:
-                    square.draw(window, config.BLACK)
-                else:
-                    square.draw(window, config.WHITE)
-
+        render_current_grid(window)
 
         # Highlight the final path
         for square in PATH:

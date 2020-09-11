@@ -52,7 +52,10 @@ python main.py -d
 - click or drag: Add walls (obstacles)
 
 ## TODO:
+
+- [ ] Reset visualizer option
 - [ ] Make a noticable notification for No solution found case and ended visualization (Maybe use Tkinter)
+- [ ] Show time it took to find the path
 - [ ] Add option for A* algorithm G, H and F scores on each square
 
 
