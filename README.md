@@ -49,7 +49,8 @@ python main.py -d
 
 - `c` : Toogle on/off the coordinate system on the grid
 
-- click or drag: Add walls (obstacles)
+- Left click or drag: Add walls (obstacles)
+- Right click or drag: Remove walls
 
 ## TODO:
 
