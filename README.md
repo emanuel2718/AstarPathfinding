@@ -50,8 +50,13 @@ python main.py -d
 
 - `e` : Add ending node (hover over desired square and press the key)
 
-- `c` : Toogle on/off the coordinate system on the grid
+- `c` : Toogle on/off the coordinate system renderer on the grid
 
+- `n` : Toogle on/off the score system renderer on the grid
+    - `Bottom left` &nbsp; &nbsp;: `G` score --> movement cost from current square to start square
+    - `Bottom rigth`&nbsp; : `H` score --> movement cost from current square to end square
+    - `Top left`          : `F` score --> total score (h + g = f)
+&nbsp;
 - `L_Shift+R` : Restart the game
 
 - Left click or drag: Add walls (obstacles)
@@ -61,8 +66,10 @@ python main.py -d
 
 - [x] Put all the current colors of the squares in a dictionary for easy change of color choice
 - [x] Reset visualizer option
+- [ ] Refactor mouse and key handlers out of the main function (Clean it)
 - [ ] Make a noticable notification for No solution found case and ended visualization (Maybe use Tkinter)
 - [ ] Show time it took to find the path
+- [ ] Optimize scores and coordinates renderer to handle different window sizes
 - [ ] Add option for A* algorithm G, H and F scores on each square
 - [ ] Make a separate window to handle the settings such as diagonals, coordinates etc.
 

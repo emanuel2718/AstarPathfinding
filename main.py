@@ -26,6 +26,7 @@ FLAGS = {'start_flag'               : False,
          'end_point_chosen_flag'    : False,
          'result_flag'              : False,
          'show_coordinates_flag'    : False,
+         'show_scores_flag'         : False,
          'visualization_terminated' : False,
          'game_restarted_flag'      : False}
 
@@ -36,6 +37,7 @@ COLORS = {'empty_color'             : config.WHITE,
           'openset_color'           : config.LIGHT_GREEN,
           'closedset_color'         : config.LIGHT_RED,
           'path_color'              : config.LIGHT_BLUE,
+          'scores_color'            : config.DARK_GREEN,
           'coord_path_color'        : config.YELLOW,
           'coord_normal_color'      : config.LIGHT_BLUE}
 
@@ -249,10 +251,47 @@ def toogle_coordinates(window):
 
 
 def toogle_square_scores(window):
-    # TODO: show the F score in the upper right.
-    #       show the G score in the bootom left
-    #       show the H score in the bootom right
-    pass
+    ''' Toogles the each square A* score if the square is either in the
+        Open set, close set or in the path list.
+
+        1. On the bottom left is showcased the "g" score which represents the movement
+           cost or distance from the current square to the starting square.
+
+        2. On the bottom right is showcased the "h" score which represents the movement
+           cost or distance from the current square to the endsquare.
+
+        3. On the top right is showcased the "f" score of the square
+           which represents the total score of the square (h + g = f)
+
+    @param: pygame object: the game window
+    '''
+    for i in range(0, config.WINDOW_SIZE[0], get_width()):
+        for j in range(0, config.WINDOW_SIZE[1], get_width()):
+            x_pos = math.floor(i//get_width())
+            y_pos = math.floor(j//get_heigth())
+            square = GRID[x_pos][y_pos]
+
+            if square in OPEN_SET or square in CLOSED_SET or square in PATH:
+                # F score in the top left
+                f_score = config.FSCORE_FONT.render(f'{int(square.f)}', True, config.BLACK)
+                f_score_rect = f_score.get_rect()
+                f_score_rect.center = (i+10, j+8)
+
+                # G score in the bottom left
+                g_score = config.SCORES_FONT.render(f'{int(square.g)}', True, config.BLACK)
+                g_score_rect = f_score.get_rect()
+                g_score_rect.center = (i+10, j+55)
+
+                # H score in the bottom right
+                h_score = config.SCORES_FONT.render(f'{int(square.h)}', True, config.BLACK)
+                h_score_rect = f_score.get_rect()
+                h_score_rect.center = (i+55, j+55)
+
+                # render the scores
+                window.blit(f_score, f_score_rect)
+                window.blit(g_score, g_score_rect)
+                window.blit(h_score, h_score_rect)
+
 
 
 def reset_game():
@@ -357,19 +396,31 @@ def main():
                 if event.key == pygame.K_m:
                     pass
 
+                # Toogle key (n) for A* pathfinding scores
+                if event.key == pygame.K_n:
+                    if not FLAGS.get('show_scores_flag'):
+                        if FLAGS.get('show_coordinates_flag'):
+                            FLAGS.update({'show_coordinates_flag': False}) # Turn off the coordinates
+                        FLAGS.update({'show_scores_flag': True})
+                    else:
+                        FLAGS.update({'show_scores_flag': False})
+
                 # Toogle key for the coordinate system on the grid
                 if event.key == pygame.K_c:
                     if not FLAGS.get('show_coordinates_flag'):
+                        if FLAGS.get('show_scores_flag'):
+                            FLAGS.update({'show_scores_flag': False})     # Turn off the scores
                         FLAGS.update({'show_coordinates_flag': True})
                     else:
                         FLAGS.update({'show_coordinates_flag': False})
 
-                # L_Shift + R will reset back to the initial grid state
+                # Toogle key (L_Shift + R) will reset back to the initial grid state
                 if event.key == pygame.K_r and pygame.key.get_mods() & pygame.KMOD_LSHIFT:
                     FLAGS.update({'start_flag': False})
                     reset_game()
 
-                if event.key == pygame.K_s: # Draw starting node on the board with (s) key
+                # Toogle key (s) add starting node to the grid on mouse click position
+                if event.key == pygame.K_s:
                     if not FLAGS.get('start_point_chosen_flag'):
                         position = get_square_pos_from_mouse(pygame.mouse.get_pos())
                         STARTING_POINT = GRID[position[0]][position[1]]
@@ -380,7 +431,8 @@ def main():
                         else:
                             print('There is a wall in this square. Try another square.')
 
-                if event.key == pygame.K_e: # Draw end node on the board with (e) key
+                # Toogle key (e) add ending node to the grid on mouse click position
+                if event.key == pygame.K_e:
                     if not FLAGS.get('end_point_chosen_flag'):
                         position = get_square_pos_from_mouse(pygame.mouse.get_pos())
                         END_POINT = GRID[position[0]][position[1]]
@@ -416,10 +468,13 @@ def main():
             GRID[square.x][square.y].color = COLORS.get('path_color')
 
 
-        # Toogle coordinates on screen
+        # Toogle coordinates on grid
         if FLAGS.get('show_coordinates_flag'):
-        #if show_coordinates_flag:
             toogle_coordinates(window)
+
+        # Toogle scores on the grid
+        if FLAGS.get('show_scores_flag'):
+            toogle_square_scores(window)
 
         pygame.display.flip()
         clock.tick(config.FPS) # Limit to 60 frames per second

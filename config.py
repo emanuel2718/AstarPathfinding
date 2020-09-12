@@ -33,3 +33,5 @@ YELLOW = (255, 255, 0)
 # Pygame font initialization
 font.init()
 FONT = font.Font(font.get_default_font(), 10)
+FSCORE_FONT = font.Font(font.get_default_font(), 14) # used for the f score. Must be bigger than @SCORES_FONT
+SCORES_FONT = font.Font('fonts/arial.ttf', 10)
