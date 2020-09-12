@@ -53,9 +53,9 @@ python main.py -d
 - `c` : Toogle on/off the coordinate system renderer on the grid
 
 - `n` : Toogle on/off the score system renderer on the grid
-    - `Bottom left` &nbsp; &nbsp;: `G` score --> movement cost from current square to start square
-    - `Bottom rigth`&nbsp; : `H` score --> movement cost from current square to end square
-    - `Top left`          : `F` score --> total score (h + g = f)
+    - `Bottom left` &nbsp; &nbsp;: G score --> movement cost from current square to start square
+    - `Bottom right`&nbsp; : H score --> movement cost from current square to end square
+    - `Top left`&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : F score --> total score (h + g = f)
 &nbsp;
 - `L_Shift+R` : Restart the game
 
