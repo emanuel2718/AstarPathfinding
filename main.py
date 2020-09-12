@@ -552,7 +552,8 @@ def main():
                 # Update mode to Done
                 MODES.update({'running': False})
                 MODES.update({'done': True})
-            GRID[square.x][square.y].color = COLORS.get('path_color')
+            if GRID[square.x][square.y].color != COLORS.get('start_color'):
+                GRID[square.x][square.y].color = COLORS.get('path_color')
 
 
         # Toogle coordinates on grid
