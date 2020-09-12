@@ -21,14 +21,22 @@ END_POINT      = None
 DIAGONALS = False # Will decide if the A* algorithm uses diagonal movement as valid or not.
                   # set as command line argument '-d'
 
+
 FLAGS = {'start_flag'               : False,
          'start_point_chose_flag'   : False,
          'end_point_chosen_flag'    : False,
          'result_flag'              : False,
          'show_coordinates_flag'    : False,
          'show_scores_flag'         : False,
+         'settings_panel_visible'   : False,
          'visualization_terminated' : False,
          'game_restarted_flag'      : False}
+
+MODES = {'creator_mode'             : True,
+         'running'                  : False,
+         'done'                     : False,
+         'no_solution'              : False}
+
 
 COLORS = {'empty_color'             : config.WHITE,
           'wall_color'              : config.BLACK,
@@ -226,6 +234,8 @@ def a_star_pathfinding(start_flag, start, end):
                     neighbor.f = neighbor.g + neighbor.h
                     neighbor.prev = current
     else:
+        MODES.update({'running': False})
+        MODES.update({'no_solution': True})
         print("No solution was found for the current configuration.")
         return -1
     return flag
@@ -318,6 +328,12 @@ def reset_game():
     # reset all the flags
     for flag, value in FLAGS.items():
         FLAGS.update({flag: False})
+
+    # Update the modes
+    MODES.update({'running': False})
+    MODES.update({'done': False})
+    MODES.update({'no_solution': False})
+    MODES.update({'creator_mode': True})
     return
 
 
@@ -348,6 +364,65 @@ def render_current_grid(window):
 
             else:                                                      # EMPTY SQUARE
                 square.draw(window, COLORS.get('empty_color'))
+
+
+def draw_settings_panel(window):
+    # Draw the empty panel
+    settings_panel = pygame.Surface((config.PANEL_WIDTH, config.PANEL_HEIGTH), pygame.SRCALPHA)   # per-pixel alpha
+    settings_panel.fill(config.PANEL_COLOR)
+    window.blit(settings_panel, (config.PANEL_X_POS, config.PANEL_Y_POS))
+
+    render_current_mode(window)
+    render_counters(window)
+
+def render_counters(window):
+    ''' Renders the counter of the amount of squares in each A* list
+        1. Open Set counter
+        2. Closed Set counter
+        3. Path Set counter
+    '''
+    # Open Set render settings
+    open_count_text = config.COUNT_FONT.render(f'Open: {len(OPEN_SET)}', True, config.BLACK)
+    open_count_text_rect =  open_count_text.get_rect()
+    open_count_text_rect.center = (config.WIDTH - 150, config.PANEL_Y_POS + 40)
+
+    # Closed Set render settings
+    close_count_text = config.COUNT_FONT.render(f'Close: {len(CLOSED_SET)}', True, config.BLACK)
+    close_count_text_rect =  open_count_text.get_rect()
+    close_count_text_rect.center = (config.WIDTH - 150, config.PANEL_Y_POS + 100)
+
+    # Path Set render settings
+    path_count_text = config.COUNT_FONT.render(f'Path: {len(PATH)}', True, config.BLACK)
+    path_count_text_rect =  open_count_text.get_rect()
+    path_count_text_rect.center = (config.WIDTH - 150, config.PANEL_Y_POS + 160)
+
+    # Render counters on the settings panel
+    window.blit(open_count_text, open_count_text_rect)
+    window.blit(close_count_text, close_count_text_rect)
+    window.blit(path_count_text, path_count_text_rect)
+
+
+def render_current_mode(window):
+    ''' Renders the current mode into the settings panel.
+        Possible modes:
+            - Creator mode
+            - Running mode
+            - Done
+            - No solution
+    '''
+    if MODES.get('creator_mode'):
+        mode_text = config.MODE_FONT.render(f'Mode: Creator', True, config.BLACK)
+    elif MODES.get('running'):
+        mode_text = config.MODE_FONT.render(f'Mode: Running', True, config.BLACK)
+    elif MODES.get('done'):
+        mode_text = config.MODE_FONT.render(f'Mode: Done', True, config.BLACK)
+    elif MODES.get('no_solution'):
+        mode_text = config.MODE_FONT.render(f'Mode: No solution', True, config.BLACK)
+
+    # Render the mode
+    mode_text_rect =  mode_text.get_rect()
+    mode_text_rect.center = (config.PANEL_X_POS + 150, config.PANEL_Y_POS + 40)
+    window.blit(mode_text, mode_text_rect)
 
 
 def main():
@@ -442,11 +517,20 @@ def main():
                             FLAGS.update({'end_point_chosen_flag': True})
                         else:
                             print('There is a wall in this square. Try another square.')
+                if event.key == pygame.K_ESCAPE:
+                    if FLAGS.get('settings_panel_visible'):
+                        FLAGS.update({'settings_panel_visible' : False})
+                    else:
+                        FLAGS.update({'settings_panel_visible' : True})
+
 
 
         # start pathfinding
         if FLAGS.get('start_flag'):
-            #a_star_pathfinding(True, STARTING_POINT, END_POINT)
+            # Update the modes to runing
+            MODES.update({'creator_mode': False})
+            MODES.update({'running': True})
+
             result = a_star_pathfinding(True, STARTING_POINT, END_POINT)
             # Avoid printing unlimited message when no solution is found!
             if result == -1:
@@ -465,6 +549,9 @@ def main():
             if i == len(PATH)-1 and not FLAGS.get('visualization_terminated'):
                 FLAGS.update({'visualization_terminated': True})
                 print('A* Pathfinding visualization has terminated. Press Left Shift + R to reset the grid.')
+                # Update mode to Done
+                MODES.update({'running': False})
+                MODES.update({'done': True})
             GRID[square.x][square.y].color = COLORS.get('path_color')
 
 
@@ -475,6 +562,10 @@ def main():
         # Toogle scores on the grid
         if FLAGS.get('show_scores_flag'):
             toogle_square_scores(window)
+
+        # Toogle settings panel
+        if FLAGS.get('settings_panel_visible'):
+            draw_settings_panel(window)
 
         pygame.display.flip()
         clock.tick(config.FPS) # Limit to 60 frames per second

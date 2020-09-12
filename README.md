@@ -57,7 +57,10 @@ python main.py -d
     - `Bottom right`&nbsp; : H score --> movement cost from current square to end square
     - `Top left`&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : F score --> total score (h + g = f)
 &nbsp;
+- `Esc` : Toogle on/off the settings panel
+
 - `L_Shift+R` : Restart the game
+
 
 - Left click or drag: Add walls (obstacles)
 - Right click or drag: Remove walls
@@ -66,12 +69,13 @@ python main.py -d
 
 - [x] Put all the current colors of the squares in a dictionary for easy change of color choice
 - [x] Reset visualizer option
+- [x] Add option for A* algorithm G, H and F scores on each square
+- [ ] Handle exception (i.e start without end or start node)
+- [ ] Make a better settings panel (Use tkinter)
+- [ ] Hndle diagonals, coordinates, scores in the settings panel with buttons (tkinter)
 - [ ] Refactor mouse and key handlers out of the main function (Clean it)
-- [ ] Make a noticable notification for No solution found case and ended visualization (Maybe use Tkinter)
 - [ ] Show time it took to find the path
 - [ ] Optimize scores and coordinates renderer to handle different window sizes
-- [ ] Add option for A* algorithm G, H and F scores on each square
-- [ ] Make a separate window to handle the settings such as diagonals, coordinates etc.
 
 
 
