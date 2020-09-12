@@ -5,6 +5,7 @@
 import config
 import pygame, math, random, sys, time
 import tkinter as tk
+from tkinter import messagebox
 
 
 # TODO: Refactor this later to make it more pythonic!!!
@@ -393,10 +394,11 @@ def main():
 
         # start pathfinding
         if FLAGS.get('start_flag'):
-            a_star_pathfinding(True, STARTING_POINT, END_POINT)
-            #result = a_star_pathfinding(True, STARTING_POINT, END_POINT)
-            #if result == -1:
-            #    FLAGS.update({'start_flag': False})
+            #a_star_pathfinding(True, STARTING_POINT, END_POINT)
+            result = a_star_pathfinding(True, STARTING_POINT, END_POINT)
+            # Avoid printing unlimited message when no solution is found!
+            if result == -1:
+                FLAGS.update({'start_flag': False})
 
         # Draw the current squares colors to the window
         render_current_grid(window)
