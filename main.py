@@ -429,7 +429,7 @@ def main():
     ''' Program driver'''
     pygame.init()
     window = pygame.display.set_mode(config.WINDOW_SIZE)
-    pygame.display.set_caption("A* Visualizer by Emanuel Ramirez")
+    pygame.display.set_caption("A* Pathfinding Visualizer")
 
     build_initial_grid()
     build_neighbors_grid()
