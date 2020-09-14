@@ -50,6 +50,8 @@ python main.py -d
 
 - `e` : Add ending node (hover over desired square and press the key)
 
+- `i` : Invert grid background color (White -> Black or Blac -> White)
+
 - `c` : Toogle on/off the coordinate system renderer on the grid
 
 - `n` : Toogle on/off the score system renderer on the grid
@@ -70,7 +72,8 @@ python main.py -d
 - [x] Put all the current colors of the squares in a dictionary for easy change of color choice
 - [x] Reset visualizer option
 - [x] Add option for A* algorithm G, H and F scores on each square
-- [ ] Handle exception (i.e start without end or start node)
+- [x] Handle exception (i.e start without end or start node)
+- [ ] Make a keybinds panel
 - [ ] Make a better settings panel (Use tkinter)
 - [ ] Hndle diagonals, coordinates, scores in the settings panel with buttons (tkinter)
 - [ ] Refactor mouse and key handlers out of the main function (Clean it)

@@ -76,9 +76,12 @@ class Square:
 
         @param: pygame.display, tuple: window object and RGB hex tuple
         '''
-        # If is a grid square inver the colors
-        if FLAGS.get('invert_grid_colors_flag') and color == config.WHITE:
+        # If is a grid square invert the colors
+        if FLAGS.get('invert_grid_colors_flag') and color == COLORS.get('empty_color'):
             pygame.draw.rect(window, color, (self.x*get_width(), self.y*get_heigth(), get_width()-1, get_heigth()-1), 1)
+        # Invert the colors of the walls from black to white
+        elif FLAGS.get('invert_grid_colors_flag') and color == COLORS.get('wall_color'):
+            pygame.draw.rect(window, config.WHITE, (self.x*get_width(), self.y*get_heigth(), get_width()-1, get_heigth()-1), 0)
 
         else:
             self.color = color
@@ -548,7 +551,15 @@ def main():
             MODES.update({'creator_mode': False})
             MODES.update({'running': True})
 
-            result = a_star_pathfinding(True, STARTING_POINT, END_POINT)
+            try:
+                result = a_star_pathfinding(True, STARTING_POINT, END_POINT)
+            except:
+                print('\nError: Initial node missing, both end and start nodes must be present.')
+                print('Press (?) to view the available keybinds.\n')
+
+                FLAGS.update({'start_flag' : False})
+                continue
+
             # Avoid printing unlimited message when no solution is found!
             if result == -1:
                 FLAGS.update({'start_flag': False})
