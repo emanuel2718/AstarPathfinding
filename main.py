@@ -196,26 +196,26 @@ def heuristics(a, b):
 
 def a_star_pathfinding(start_flag, start, end):
     ''' TODO: Think about a concise A* star explanation'''
-    flag = False
+    flagged = False
     if len(OPEN_SET) > 0:
-        winner = 0
+        best_candidate_index = 0
         for i in range(len(OPEN_SET)):
-            if OPEN_SET[i].f < OPEN_SET[winner].f:
-                winner = i
-        current = OPEN_SET[winner]
+            if OPEN_SET[i].f < OPEN_SET[best_candidate_index].f:
+                best_candidate_index = i
+        current = OPEN_SET[best_candidate_index]
 
         if current == end:
             temp = current
             while temp.prev:
                 PATH.append(temp.prev)
                 temp = temp.prev
-            if not flag:
-                flag = True
+            if not flagged:
+                flagged = True
                 return
-            elif flag:
+            elif flagged:
                 return
 
-        if not flag:
+        if not flagged:
             OPEN_SET.remove(current)
             CLOSED_SET.append(current)
 
@@ -223,19 +223,19 @@ def a_star_pathfinding(start_flag, start, end):
                 #time.sleep(-time.time()%1)
                 if neighbor in CLOSED_SET or neighbor.wall:
                     continue
-                tempG = current.g + 1
+                temp_g_score = current.g + 1
 
-                newPath =  False
+                new_path =  False
                 if neighbor in OPEN_SET:
-                    if tempG < neighbor.g:
-                        neighbor.g = tempG
-                        newPath = True
+                    if temp_g_score < neighbor.g:
+                        neighbor.g = temp_g_score
+                        new_path = True
                 else:
-                    neighbor.g = tempG
-                    newPath = True
+                    neighbor.g = temp_g_score
+                    new_path = True
                     OPEN_SET.append(neighbor)
 
-                if newPath:
+                if new_path:
                     neighbor.h = heuristics(neighbor, end)
                     neighbor.f = neighbor.g + neighbor.h
                     neighbor.prev = current
@@ -244,7 +244,7 @@ def a_star_pathfinding(start_flag, start, end):
         MODES.update({'no_solution': True})
         print("No solution was found for the current configuration.")
         return -1
-    return flag
+    return flagged
 
 
 #TODO: Make it possible for resize of text and center the coordinates on the squares.
