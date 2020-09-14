@@ -22,12 +22,12 @@ pip install -r requirements.txt
 
 ## Preview
 
-![Coordinate update](videos/coordinateUpdate.gif)
+![Premade](videos/premade.gif)
 
 &nbsp;
 &nbsp;
 
-![Random case1](videos/case1.gif)
+![Custom](videos/custom.gif)
 
 
 
