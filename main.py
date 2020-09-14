@@ -30,6 +30,7 @@ FLAGS = {'start_flag'               : False,
          'show_scores_flag'         : False,
          'settings_panel_visible'   : False,
          'visualization_terminated' : False,
+         'invert_grid_colors_flag'  : False,
          'game_restarted_flag'      : False}
 
 MODES = {'creator_mode'             : True,
@@ -75,8 +76,13 @@ class Square:
 
         @param: pygame.display, tuple: window object and RGB hex tuple
         '''
-        self.color = color
-        pygame.draw.rect(window, color, (self.x*get_width(), self.y*get_heigth(), get_width()-1, get_heigth()-1), 0)
+        # If is a grid square inver the colors
+        if FLAGS.get('invert_grid_colors_flag') and color == config.WHITE:
+            pygame.draw.rect(window, color, (self.x*get_width(), self.y*get_heigth(), get_width()-1, get_heigth()-1), 1)
+
+        else:
+            self.color = color
+            pygame.draw.rect(window, color, (self.x*get_width(), self.y*get_heigth(), get_width()-1, get_heigth()-1), 0)
 
 
     def add_neighbors(self, grid):
@@ -424,6 +430,11 @@ def render_current_mode(window):
     mode_text_rect.center = (config.PANEL_X_POS + 150, config.PANEL_Y_POS + 40)
     window.blit(mode_text, mode_text_rect)
 
+def invert_colors(window):
+    print('Invert colors')
+    pass
+
+
 
 def main():
     ''' Program driver'''
@@ -522,6 +533,12 @@ def main():
                         FLAGS.update({'settings_panel_visible' : False})
                     else:
                         FLAGS.update({'settings_panel_visible' : True})
+                if event.key == pygame.K_i:
+                    #invert_colors(window)
+                    if not FLAGS.get('invert_grid_colors_flag'):
+                        FLAGS.update({'invert_grid_colors_flag' : True})
+                    else:
+                        FLAGS.update({'invert_grid_colors_flag' : False})
 
 
 
