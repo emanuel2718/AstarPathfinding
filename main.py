@@ -4,8 +4,6 @@
 
 import config
 import pygame, math, random, sys, time
-import tkinter as tk
-from tkinter import messagebox
 
 
 # TODO: Refactor this later to make it more pythonic!!!
