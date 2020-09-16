@@ -26,6 +26,7 @@ FLAGS = {'start_flag'               : False,
          'result_flag'              : False,
          'show_coordinates_flag'    : False,
          'show_scores_flag'         : False,
+         'show_keybinds_flag'       : False,
          'settings_panel_visible'   : False,
          'visualization_terminated' : False,
          'invert_grid_colors_flag'  : False,
@@ -435,6 +436,48 @@ def invert_colors(window):
     print('Invert colors')
     pass
 
+def show_keybinds_panel(window):
+    ''' Show a semi-transparent panel with all the visualizer keybindings'''
+    keybinds_panel = pygame.Surface((config.WIDTH, config.HEIGTH), pygame.SRCALPHA)   # per-pixel alpha
+    keybinds_panel.fill(config.PANEL_COLOR)
+    window.blit(keybinds_panel, (0, 0))
+    render_keybinds(window)
+
+def render_keybinds(window):
+    ''' Render keybinds text into the screen'''
+
+    # title
+    keybinds_title = config.KEYBINDS_TITLE_FONT.render(f'Keybindings:', True, config.BLACK)
+    keybinds_title_rect =  keybinds_title.get_rect()
+    keybinds_title_rect.center = (config.WIDTH//2, config.HEIGTH//3 - 80)
+
+    # s keybind
+    keybinds_s = config.KEYBINDS_FONT.render(f's -> Add Starting node', True, config.BLACK)
+    keybinds_s_rect = (config.WIDTH//4, config.HEIGTH//3 + 40)
+
+    # e keybind
+    keybinds_e = config.KEYBINDS_FONT.render(f'e -> Add Ending node', True, config.BLACK)
+    keybinds_e_rect = (config.WIDTH//4, config.HEIGTH//3 + 100)
+
+    # i keybind
+    keybinds_i = config.KEYBINDS_FONT.render(f'i -> Invert grid colors', True, config.BLACK)
+    keybinds_i_rect = (config.WIDTH//4, config.HEIGTH//3 + 160)
+
+    # n keybind
+    keybinds_n = config.KEYBINDS_FONT.render(f'n -> Toogle score renderer', True, config.BLACK)
+    keybinds_n_rect = (config.WIDTH//4, config.HEIGTH//3 + 220)
+
+    # reset (L_Shift + R) keybind
+    keybinds_reset = config.KEYBINDS_FONT.render(f'L_Shift + R -> Restart', True, config.BLACK)
+    keybinds_reset_rect = (config.WIDTH//4, config.HEIGTH//3 + 280)
+
+    window.blit(keybinds_title, keybinds_title_rect)
+    window.blit(keybinds_s, keybinds_s_rect)
+    window.blit(keybinds_e, keybinds_e_rect)
+    window.blit(keybinds_i, keybinds_i_rect)
+    window.blit(keybinds_n, keybinds_n_rect)
+    window.blit(keybinds_reset, keybinds_reset_rect)
+
 
 
 def main():
@@ -506,6 +549,7 @@ def main():
                     FLAGS.update({'start_flag': False})
                     reset_game()
 
+
                 # Toogle key (s) add starting node to the grid on mouse click position
                 if event.key == pygame.K_s:
                     if not FLAGS.get('start_point_chosen_flag'):
@@ -529,11 +573,22 @@ def main():
                             FLAGS.update({'end_point_chosen_flag': True})
                         else:
                             print('There is a wall in this square. Try another square.')
+
+                # Toogle settings panel
                 if event.key == pygame.K_ESCAPE:
                     if FLAGS.get('settings_panel_visible'):
                         FLAGS.update({'settings_panel_visible' : False})
                     else:
                         FLAGS.update({'settings_panel_visible' : True})
+
+                # Toogle keybinds (help) panel
+                if event.key == pygame.K_SLASH and pygame.key.get_mods() & pygame.KMOD_LSHIFT:
+                    if FLAGS.get('show_keybinds_flag'):
+                        FLAGS.update({'show_keybinds_flag': False})
+                    else:
+                        FLAGS.update({'show_keybinds_flag': True})
+
+                # Toogle grid background color inversion
                 if event.key == pygame.K_i:
                     #invert_colors(window)
                     if not FLAGS.get('invert_grid_colors_flag'):
@@ -593,6 +648,10 @@ def main():
         # Toogle settings panel
         if FLAGS.get('settings_panel_visible'):
             draw_settings_panel(window)
+
+        # Toogle keybinds (help) panel
+        if FLAGS.get('show_keybinds_flag'):
+            show_keybinds_panel(window)
 
         pygame.display.flip()
         clock.tick(config.FPS) # Limit to 60 frames per second

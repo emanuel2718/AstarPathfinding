@@ -18,7 +18,7 @@ PANEL_WIDTH = WIDTH
 PANEL_HEIGTH = HEIGTH//2
 PANEL_X_POS = 0
 PANEL_Y_POS = HEIGTH - (HEIGTH//NUM_COLS)*3 # 3 squares from the bottom up
-PANEL_COLOR = (130,146,154,128)
+PANEL_COLOR = (130,146,154,200)
 
 
 FPS = 60
@@ -41,6 +41,8 @@ YELLOW = (255, 255, 0)
 # Pygame font initialization
 font.init()
 FONT = font.Font(font.get_default_font(), 10)
+KEYBINDS_FONT = font.Font(font.get_default_font(), 40)
+KEYBINDS_TITLE_FONT = font.Font(font.get_default_font(), 52)
 COUNT_FONT = font.Font(font.get_default_font(), 18)
 MODE_FONT = font.Font(font.get_default_font(), 36)
 FSCORE_FONT = font.Font(font.get_default_font(), 14) # used for the f score. Must be bigger than @SCORES_FONT

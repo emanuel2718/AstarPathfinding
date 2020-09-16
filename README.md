@@ -54,6 +54,8 @@ python main.py -d
 
 - `c` : Toogle on/off the coordinate system renderer on the grid
 
+- `?` : Toogle on/off keybinds help panel
+
 - `n` : Toogle on/off the score system renderer on the grid
     - `Bottom left` &nbsp; &nbsp;: G score --> movement cost from current square to start square
     - `Bottom right`&nbsp; : H score --> movement cost from current square to end square
@@ -73,10 +75,10 @@ python main.py -d
 - [x] Reset visualizer option
 - [x] Add option for A* algorithm G, H and F scores on each square
 - [x] Handle exception (i.e start without end or start node)
-- [ ] Make a keybinds panel
-- [ ] Make a better settings panel (Use tkinter)
-- [ ] Hndle diagonals, coordinates, scores in the settings panel with buttons (tkinter)
-- [ ] Refactor mouse and key handlers out of the main function (Clean it)
+- [x] Make a keybinds panel
+- [ ] Make the UI look more polished (i.e Settings panel, keybinds panel etc.)
+- [ ] Make a better settings panel (interactive with buttons)
+- [ ] Refactor majority of the code (Mouse and key handlers etc.)
 - [ ] Show time it took to find the path
 - [ ] Optimize scores and coordinates renderer to handle different window sizes
 
