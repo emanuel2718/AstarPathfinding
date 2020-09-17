@@ -1,6 +1,7 @@
 # Created by Emanuel Ramirez on 09/08/2020
 
-from pygame import font
+import pygame
+#from pygame import image
 
 ''' Contains all the technical configurations of the game'''
 
@@ -39,11 +40,15 @@ YELLOW = (255, 255, 0)
 
 
 # Pygame font initialization
-font.init()
-FONT = font.Font(font.get_default_font(), 10)
-KEYBINDS_FONT = font.Font(font.get_default_font(), 40)
-KEYBINDS_TITLE_FONT = font.Font(font.get_default_font(), 52)
-COUNT_FONT = font.Font(font.get_default_font(), 18)
-MODE_FONT = font.Font(font.get_default_font(), 36)
-FSCORE_FONT = font.Font(font.get_default_font(), 14) # used for the f score. Must be bigger than @SCORES_FONT
-SCORES_FONT = font.Font('fonts/arial.ttf', 10)
+pygame.font.init()
+FONT = pygame.font.Font(pygame.font.get_default_font(), 10)
+KEYBINDS_FONT = pygame.font.Font(pygame.font.get_default_font(), 40)
+KEYBINDS_TITLE_FONT = pygame.font.Font(pygame.font.get_default_font(), 52)
+COUNT_FONT = pygame.font.Font(pygame.font.get_default_font(), 18)
+MODE_FONT = pygame.font.Font(pygame.font.get_default_font(), 36)
+FSCORE_FONT = pygame.font.Font(pygame.font.get_default_font(), 14) # used for the f score. Must be bigger than @SCORES_FONT
+SCORES_FONT = pygame.font.Font('fonts/arial.ttf', 10)
+
+
+# Images
+keybinds_image = pygame.image.load('images/keybinds.png')

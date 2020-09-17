@@ -7,10 +7,10 @@ import pygame, math, random, sys, time
 
 
 # TODO: Refactor this later to make it more pythonic!!!
-OPEN_SET   = [] # All the squares being cosidered to find the shortest path
-CLOSED_SET = [] # All the square NOT being cosidered anymore
-GRID       = []
-PATH       = []
+OPEN_SET       = [] # All the squares being cosidered to find the shortest path
+CLOSED_SET     = [] # All the square NOT being cosidered anymore
+GRID           = []
+PATH           = []
 
 # Initial starting and ending squares
 STARTING_POINT = None
@@ -411,6 +411,7 @@ def render_counters(window):
 
 
 def render_current_mode(window):
+    #TODO: Refactor this to an image
     ''' Renders the current mode into the settings panel.
         Possible modes:
             - Creator mode
@@ -432,52 +433,13 @@ def render_current_mode(window):
     mode_text_rect.center = (config.PANEL_X_POS + 150, config.PANEL_Y_POS + 40)
     window.blit(mode_text, mode_text_rect)
 
-def invert_colors(window):
-    print('Invert colors')
-    pass
 
 def show_keybinds_panel(window):
     ''' Show a semi-transparent panel with all the visualizer keybindings'''
     keybinds_panel = pygame.Surface((config.WIDTH, config.HEIGTH), pygame.SRCALPHA)   # per-pixel alpha
     keybinds_panel.fill(config.PANEL_COLOR)
-    window.blit(keybinds_panel, (0, 0))
-    render_keybinds(window)
-
-def render_keybinds(window):
-    ''' Render keybinds text into the screen'''
-
-    # title
-    keybinds_title = config.KEYBINDS_TITLE_FONT.render(f'Keybindings:', True, config.BLACK)
-    keybinds_title_rect =  keybinds_title.get_rect()
-    keybinds_title_rect.center = (config.WIDTH//2, config.HEIGTH//3 - 80)
-
-    # s keybind
-    keybinds_s = config.KEYBINDS_FONT.render(f's -> Add Starting node', True, config.BLACK)
-    keybinds_s_rect = (config.WIDTH//4, config.HEIGTH//3 + 40)
-
-    # e keybind
-    keybinds_e = config.KEYBINDS_FONT.render(f'e -> Add Ending node', True, config.BLACK)
-    keybinds_e_rect = (config.WIDTH//4, config.HEIGTH//3 + 100)
-
-    # i keybind
-    keybinds_i = config.KEYBINDS_FONT.render(f'i -> Invert grid colors', True, config.BLACK)
-    keybinds_i_rect = (config.WIDTH//4, config.HEIGTH//3 + 160)
-
-    # n keybind
-    keybinds_n = config.KEYBINDS_FONT.render(f'n -> Toogle score renderer', True, config.BLACK)
-    keybinds_n_rect = (config.WIDTH//4, config.HEIGTH//3 + 220)
-
-    # reset (L_Shift + R) keybind
-    keybinds_reset = config.KEYBINDS_FONT.render(f'L_Shift + R -> Restart', True, config.BLACK)
-    keybinds_reset_rect = (config.WIDTH//4, config.HEIGTH//3 + 280)
-
-    window.blit(keybinds_title, keybinds_title_rect)
-    window.blit(keybinds_s, keybinds_s_rect)
-    window.blit(keybinds_e, keybinds_e_rect)
-    window.blit(keybinds_i, keybinds_i_rect)
-    window.blit(keybinds_n, keybinds_n_rect)
-    window.blit(keybinds_reset, keybinds_reset_rect)
-
+    window.blit(keybinds_panel, (0, 0))       # Renders the transparent background
+    window.blit(config.keybinds_image, (0,0)) # Renders the keybinds image
 
 
 def main():
