@@ -76,6 +76,7 @@ python main.py -d
 - [x] Add option for A* algorithm G, H and F scores on each square
 - [x] Handle exception (i.e start without end or start node)
 - [x] Make a keybinds panel
+- [ ] Refactor rendering to just one function
 - [ ] Make the UI look more polished (i.e Settings panel, keybinds panel etc.)
 - [ ] Make a better settings panel (interactive with buttons)
 - [ ] Refactor majority of the code (Mouse and key handlers etc.)

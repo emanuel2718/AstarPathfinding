@@ -248,6 +248,22 @@ def a_star_pathfinding(start_flag, start, end):
         return -1
     return flagged
 
+def render(window, font, string, color, centered_tuple, center=False):
+    ''' Render on the given @window
+
+    @param: window         : actual window to be rendered on
+            font           : the specified font
+            string         : text to be rendered
+            color          : color the text will be rendered
+            centered_tuple : if the text need to be centered, provide the x and y coordinates
+            center         : boolean that specifies if object is to centered or not
+    '''
+    object = font.render(string, True, color)
+    objectRect = object.get_rect()
+    if center:
+        objectRect.center = centered_tuple
+    window.blit(object, objectRect)
+
 
 #TODO: Make it possible for resize of text and center the coordinates on the squares.
 def toogle_coordinates(window):
@@ -257,15 +273,11 @@ def toogle_coordinates(window):
     '''
     for i in range(0, config.WINDOW_SIZE[0], get_width()):
         for j in range(0, config.WINDOW_SIZE[1], get_width()):
-            #x_pos, y_pos = i//get_width(), j//get_heigth()
             square = GRID[i//get_width()][j//get_heigth()]
             if square.color == COLORS.get('path_color') or square.color == COLORS.get('end_color'):
-                text = config.FONT.render(f'{i}, {j}', True, COLORS.get('coord_path_color'))
+                render(window, config.FONT, f'{i}, {j}', COLORS.get('end_color'))
             else:
-                text = config.FONT.render(f'{i}, {j}', True, COLORS.get('coord_normal_color'))
-            textRect = text.get_rect()
-            textRect.center = (i+25, j+10)
-            window.blit(text, textRect)
+                render(window, config.FONT, f'{i}, {j}', COLORS.get('end_color'), (i+25, j+10), True)
 
 
 def toogle_square_scores(window):
@@ -291,24 +303,11 @@ def toogle_square_scores(window):
 
             if square in OPEN_SET or square in CLOSED_SET or square in PATH:
                 # F score in the top left
-                f_score = config.FSCORE_FONT.render(f'{int(square.f)}', True, config.BLACK)
-                f_score_rect = f_score.get_rect()
-                f_score_rect.center = (i+10, j+8)
-
+                render(window, config.FSCORE_FONT, f'{int(square.f)}', config.BLACK, (i+10, j+8), True)
                 # G score in the bottom left
-                g_score = config.SCORES_FONT.render(f'{int(square.g)}', True, config.BLACK)
-                g_score_rect = f_score.get_rect()
-                g_score_rect.center = (i+10, j+55)
-
+                render(window, config.SCORES_FONT, f'{int(square.g)}', config.BLACK, (i+10, j+55), True)
                 # H score in the bottom right
-                h_score = config.SCORES_FONT.render(f'{int(square.h)}', True, config.BLACK)
-                h_score_rect = f_score.get_rect()
-                h_score_rect.center = (i+55, j+55)
-
-                # render the scores
-                window.blit(f_score, f_score_rect)
-                window.blit(g_score, g_score_rect)
-                window.blit(h_score, h_score_rect)
+                render(window, config.SCORES_FONT, f'{int(square.h)}', config.BLACK, (i+55, j+55), True)
 
 
 
@@ -390,24 +389,12 @@ def render_counters(window):
         3. Path Set counter
     '''
     # Open Set render settings
-    open_count_text = config.COUNT_FONT.render(f'Open: {len(OPEN_SET)}', True, config.BLACK)
-    open_count_text_rect =  open_count_text.get_rect()
-    open_count_text_rect.center = (config.WIDTH - 150, config.PANEL_Y_POS + 40)
+    render(window, config.COUNT_FONT, f'Open: {len(OPEN_SET)}', config.BLACK, (config.WIDTH-150, config.PANEL_Y_POS+40), True)
+    ## Closed Set render settings
+    render(window, config.COUNT_FONT, f'Close: {len(CLOSED_SET)}', config.BLACK, (config.WIDTH-150, config.PANEL_Y_POS+100), True)
+    ## Path Set render settings
+    render(window, config.COUNT_FONT, f'Path: {len(PATH)}', config.BLACK, (config.WIDTH-150, config.PANEL_Y_POS+160), True)
 
-    # Closed Set render settings
-    close_count_text = config.COUNT_FONT.render(f'Close: {len(CLOSED_SET)}', True, config.BLACK)
-    close_count_text_rect =  open_count_text.get_rect()
-    close_count_text_rect.center = (config.WIDTH - 150, config.PANEL_Y_POS + 100)
-
-    # Path Set render settings
-    path_count_text = config.COUNT_FONT.render(f'Path: {len(PATH)}', True, config.BLACK)
-    path_count_text_rect =  open_count_text.get_rect()
-    path_count_text_rect.center = (config.WIDTH - 150, config.PANEL_Y_POS + 160)
-
-    # Render counters on the settings panel
-    window.blit(open_count_text, open_count_text_rect)
-    window.blit(close_count_text, close_count_text_rect)
-    window.blit(path_count_text, path_count_text_rect)
 
 
 def render_current_mode(window):
@@ -420,18 +407,13 @@ def render_current_mode(window):
             - No solution
     '''
     if MODES.get('creator_mode'):
-        mode_text = config.MODE_FONT.render(f'Mode: Creator', True, config.BLACK)
+        render(window, config.MODE_FONT, 'Mode: Creator', config.BLACK, (config.PANEL_X_POS+150, config.PANEL_Y_POS+40), True)
     elif MODES.get('running'):
-        mode_text = config.MODE_FONT.render(f'Mode: Running', True, config.BLACK)
+        render(window, config.MODE_FONT, 'Mode: Running', config.BLACK, (config.PANEL_X_POS+150, config.PANEL_Y_POS+40), True)
     elif MODES.get('done'):
-        mode_text = config.MODE_FONT.render(f'Mode: Done', True, config.BLACK)
+        render(window, config.MODE_FONT, 'Mode: Done', config.BLACK, (config.PANEL_X_POS+150, config.PANEL_Y_POS+40), True)
     elif MODES.get('no_solution'):
-        mode_text = config.MODE_FONT.render(f'Mode: No solution', True, config.BLACK)
-
-    # Render the mode
-    mode_text_rect =  mode_text.get_rect()
-    mode_text_rect.center = (config.PANEL_X_POS + 150, config.PANEL_Y_POS + 40)
-    window.blit(mode_text, mode_text_rect)
+        render(window, config.MODE_FONT, 'Mode: No Solution', config.BLACK, (config.PANEL_X_POS+150, config.PANEL_Y_POS+40), True)
 
 
 def show_keybinds_panel(window):
