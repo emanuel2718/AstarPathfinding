@@ -12,16 +12,13 @@ CLOSED_SET     = [] # All the square NOT being cosidered anymore
 GRID           = []
 PATH           = []
 
-# Initial starting and ending squares
-STARTING_POINT = None
-END_POINT      = None
 
 DIAGONALS = False # Will decide if the A* algorithm uses diagonal movement as valid or not.
                   # set as command line argument '-d'
 
 
 FLAGS = {'start_flag'               : False,
-         'start_point_chose_flag'   : False,
+         'start_point_chosen_flag'  : False,
          'end_point_chosen_flag'    : False,
          'result_flag'              : False,
          'show_coordinates_flag'    : False,
@@ -190,7 +187,6 @@ def get_square_pos_from_mouse(mouse_pos):
     return (x_pos, y_pos)
 
 
-
 def heuristics(a, b):
     ''' Returns an estimated the distance from current node to the end node'''
     return math.sqrt(abs(a.x-b.x)**2 + abs(a.y-b.y)**2)
@@ -247,6 +243,7 @@ def a_star_pathfinding(start_flag, start, end):
         print("No solution was found for the current configuration.")
         return -1
     return flagged
+
 
 def render(window, font, string, color, centered_tuple, center=False):
     ''' Render on the given @window
@@ -309,12 +306,30 @@ def toogle_square_scores(window):
                 # H score in the bottom right
                 render(window, config.SCORES_FONT, f'{int(square.h)}', config.BLACK, (i+55, j+55), True)
 
+def reset_only_initial_nodes(start_x, start_y, end_x, end_y):
+    ''' Will reset only the initial nodes back to empty squares.
+
+    @param: int: initial nodes x and y coordinates respectively
+    '''
+    # Reset the sets
+    OPEN_SET.clear()
+    CLOSED_SET.clear()
+    PATH.clear()
+
+    # Reset the intial nodes square colors to empty square color
+    GRID[start_x][start_y].color = COLORS.get('empty_color')
+    GRID[end_x][end_y].color = COLORS.get('empty_color')
+
+    # Reset the initial nodes flags
+    FLAGS.update({'start_point_chosen_flag': False})
+    FLAGS.update({'end_point_chosen_flag': False})
+
 
 
 def reset_game():
     # reset the starting nodes
-    STARTING_POINT = None
-    END_POINT      = None
+    #STARTING_POINT = None
+    #END_POINT      = None
 
     # Empty the current sets, path, and grid lists
     OPEN_SET.clear()
@@ -382,6 +397,7 @@ def draw_settings_panel(window):
     render_current_mode(window)
     render_counters(window)
 
+
 def render_counters(window):
     ''' Renders the counter of the amount of squares in each A* list
         1. Open Set counter
@@ -435,6 +451,10 @@ def main():
 
     start_time = None
 
+    # Initial starting and ending squares
+    STARTING_POINT = None
+    END_POINT      = None
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -463,8 +483,26 @@ def main():
             if event.type == pygame.KEYDOWN:
                 # Start the visualizer
                 if event.key == pygame.K_RETURN:
-                    FLAGS.update({'start_flag': True})
-                    start_time = pygame.time.get_ticks()
+                    if STARTING_POINT is None and END_POINT is None:
+                        print('Both initial nodes must be selected. Use (s) and (e) while hovering' +\
+                              ' the desired squares to place the initial nodes')
+                        continue
+
+                    if STARTING_POINT is None:
+                        print('Starting node must be selected. Use (s) and hover over desired square to place the starting node')
+                        continue
+
+                    if END_POINT is None:
+                        print('End node must be selected. Use (e) and hover over desired square to place the end node')
+                        continue
+
+                    if STARTING_POINT is END_POINT:
+                        print('Error: Nodes must be on different squares to show visualization. Please try again.')
+                        reset_only_initial_nodes(STARTING_POINT.x, STARTING_POINT.y, END_POINT.x, END_POINT.y)
+                        continue
+                    else:
+                        FLAGS.update({'start_flag': True})
+                        start_time = pygame.time.get_ticks()
 
                 # TODO: Eventually will be the maze generation keybinding
                 if event.key == pygame.K_m:
@@ -541,7 +579,6 @@ def main():
                         FLAGS.update({'invert_grid_colors_flag' : False})
 
 
-
         # start pathfinding
         if FLAGS.get('start_flag'):
             # Update the modes to runing
@@ -573,10 +610,11 @@ def main():
             # Way to let the prgram know that the algorithm has stopped running.
             if i == len(PATH)-1 and not FLAGS.get('visualization_terminated'):
                 FLAGS.update({'visualization_terminated': True})
-                print('A* Pathfinding visualization has terminated. Press Left Shift + R to reset the grid.')
-                # Update mode to Done
                 MODES.update({'running': False})
                 MODES.update({'done': True})
+                print('\nVisualization: Done!')
+                print('Press L_Shift + R to reset the grid.')
+
             if GRID[square.x][square.y].color != COLORS.get('start_color'):
                 GRID[square.x][square.y].color = COLORS.get('path_color')
 

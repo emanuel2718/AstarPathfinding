@@ -71,6 +71,9 @@ python main.py -d
 
 ## TODO:
 
+- [ ] Make it impossible to add walls if you are on Mode: Done or no solution mode
+- [ ] Make it possible to de-select an initial node with right click (like the walls)
+- [ ] Show notification with a tkinter window
 - [ ] Make the UI look more polished (i.e Settings panel, keybinds panel etc.)
 - [ ] Make a better settings panel (interactive with buttons)
 - [ ] Refactor majority of the code (Mouse and key handlers etc.)
