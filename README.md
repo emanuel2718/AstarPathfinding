@@ -71,6 +71,7 @@ python main.py -d
 
 ## TODO:
 
+- [ ] Add close game keybind (i.e press 'q' to quit)
 - [ ] Make it impossible to add walls if you are on Mode: Done or no solution mode
 - [ ] Make it possible to de-select an initial node with right click (like the walls)
 - [ ] Show notification with a tkinter window
