@@ -4,7 +4,13 @@
 
 import config
 import pygame, math, random, sys, time
-
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout, QWidget
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QDesktopWidget
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtCore import QSize   
 
 # TODO: Refactor this later to make it more pythonic!!!
 OPEN_SET       = [] # All the squares being cosidered to find the shortest path
@@ -49,6 +55,32 @@ COLORS = {'empty_color'             : config.WHITE,
 
 
 clock = pygame.time.Clock()
+
+class QtApp(QMainWindow):
+    ''' PyQt5 messagebox'''
+
+    def __init__(self, title, message, about):
+        QMainWindow.__init__(self)
+
+        self.title   = title
+        self.message = message
+        self.about   = about
+
+        self.setMinimumSize(QSize(300, 200))
+        self.setWindowTitle(self.title)
+
+
+
+        pybutton = QPushButton(self.message, self)
+        pybutton.clicked.connect(self.clickMethod)
+        pybutton.resize(200,64)
+        pybutton.move(50, 50)
+
+
+
+
+    def clickMethod(self):
+        QMessageBox.about(self, self.title, self.about)
 
 
 class Square:
@@ -241,6 +273,7 @@ def a_star_pathfinding(start_flag, start, end):
         MODES.update({'running': False})
         MODES.update({'no_solution': True})
         print("No solution was found for the current configuration.")
+        show_messagebox('Warning', 'No solution found', 'There must be a path between the two intial nodes')
         return -1
     return flagged
 
@@ -439,6 +472,20 @@ def show_keybinds_panel(window):
     window.blit(keybinds_panel, (0, 0))       # Renders the transparent background
     window.blit(config.keybinds_image, (0,0)) # Renders the keybinds image
 
+def show_messagebox(type, message, about):
+    ''' Will call the Qt application initializer to show the messagebox
+
+    @param: str: type    -> type of the message (i.e Warning, Error, Done etc.) will be the title of the widget
+                 message -> the message to be displayed inside the messagebox (i.e No solution found)
+                 about   -> more information about the error or warning
+    '''
+
+    app = QtWidgets.QApplication(sys.argv)
+    mainWin = QtApp(type, message, about)
+    mainWin.show()
+    sys.exit(app.exec_())
+    return
+
 
 def main():
     ''' Program driver'''
@@ -588,11 +635,16 @@ def main():
             try:
                 result = a_star_pathfinding(True, STARTING_POINT, END_POINT)
             except:
-                print('\nError: Initial node missing, both end and start nodes must be present.')
-                print('Press (?) to view the available keybinds.\n')
+                # Avoid inifinte loop in no solution case using PyQt
+                if not MODES.get('no_solution'):
+                    print('\nError: Initial node missing, both end and start nodes must be present.')
+                    print('Press (?) to view the available keybinds.\n')
 
-                FLAGS.update({'start_flag' : False})
-                continue
+                    FLAGS.update({'start_flag' : False})
+                    continue
+                else:
+                    FLAGS.update({'start_flag' : False})
+                    continue
 
             # Avoid printing unlimited message when no solution is found!
             if result == -1:

@@ -1,2 +1,3 @@
 pygame==1.9.6
 tkinter==8.5
+PyQt5==5.15.1
