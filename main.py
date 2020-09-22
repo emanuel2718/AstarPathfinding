@@ -35,7 +35,7 @@ FLAGS = {'start_flag'               : False,
          'invert_grid_colors_flag'  : False,
          'game_restarted_flag'      : False}
 
-MODES = {'creator_mode'             : True,
+MODES = {'creator'                  : True,
          'running'                  : False,
          'done'                     : False,
          'no_solution'              : False}
@@ -273,7 +273,7 @@ def a_star_pathfinding(start_flag, start, end):
         MODES.update({'running': False})
         MODES.update({'no_solution': True})
         print("No solution was found for the current configuration.")
-        show_messagebox('Warning', 'No solution found', 'There must be a path between the two intial nodes')
+        show_messagebox('Warning', 'No solution found', 'There must be a path between the two intial nodes. L_Shift + R to reset the visualizator.')
         return -1
     return flagged
 
@@ -388,7 +388,7 @@ def reset_game():
     MODES.update({'running': False})
     MODES.update({'done': False})
     MODES.update({'no_solution': False})
-    MODES.update({'creator_mode': True})
+    MODES.update({'creator': True})
     return
 
 
@@ -455,7 +455,7 @@ def render_current_mode(window):
             - Done
             - No solution
     '''
-    if MODES.get('creator_mode'):
+    if MODES.get('creator'):
         render(window, config.MODE_FONT, 'Mode: Creator', config.BLACK, (config.PANEL_X_POS+150, config.PANEL_Y_POS+40), True)
     elif MODES.get('running'):
         render(window, config.MODE_FONT, 'Mode: Running', config.BLACK, (config.PANEL_X_POS+150, config.PANEL_Y_POS+40), True)
@@ -471,6 +471,7 @@ def show_keybinds_panel(window):
     keybinds_panel.fill(config.PANEL_COLOR)
     window.blit(keybinds_panel, (0, 0))       # Renders the transparent background
     window.blit(config.keybinds_image, (0,0)) # Renders the keybinds image
+
 
 def show_messagebox(type, message, about):
     ''' Will call the Qt application initializer to show the messagebox
@@ -511,7 +512,8 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Left click --> Add wall to square
                 if pygame.mouse.get_pressed()[0]:
-                    draw_wall(pygame.mouse.get_pos())
+                    if MODES.get('creator'):
+                        draw_wall(pygame.mouse.get_pos())
 
                 # Right click --> Remove wall from square
                 if pygame.mouse.get_pressed()[2]:
@@ -629,7 +631,7 @@ def main():
         # start pathfinding
         if FLAGS.get('start_flag'):
             # Update the modes to runing
-            MODES.update({'creator_mode': False})
+            MODES.update({'creator': False})
             MODES.update({'running': True})
 
             try:
